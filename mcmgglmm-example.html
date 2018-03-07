@@ -187,7 +187,7 @@ prior1&lt;-list(R=list(R1=list(V=V, nu=0, covu=TRUE),
 
 str(dat1)
 ## 'data.frame':    1500 obs. of  3 variables:
-##  $ y         : num  0.433 0.954 2.001 2.396 -1.435 ...
+##  $ y         : num  1.785 -0.154 0.603 0.932 0.699 ...
 ##  $ type      : Factor w/ 2 levels &quot;r&quot;,&quot;s&quot;: 2 2 2 2 2 2 2 2 2 2 ...
 ##  $ individual: Factor w/ 500 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
 
@@ -209,7 +209,7 @@ summary(m.test1)
 ##  Thinning interval  = 10
 ##  Sample size  = 1000 
 ## 
-##  DIC: 4399.318 
+##  DIC: 4527.069 
 ## 
 ##  G-structure:  ~us(at.level(type, &quot;r&quot;)):individual
 ## 
@@ -218,43 +218,45 @@ summary(m.test1)
 ##  R-structure:  ~us(at.level(type, &quot;s&quot;)):individual
 ## 
 ##                                                               post.mean
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    1.0503
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual    0.5303
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual    0.5303
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual    0.9886
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    1.1472
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual    0.5533
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual    0.5533
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual    1.0829
 ##                                                               l-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.8552
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4229
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.4229
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.8803
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.9422
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4246
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.4246
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.9626
 ##                                                               u-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   1.2485
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.6437
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.6437
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1.1093
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   1.3653
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.6825
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.6825
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1.2167
 ##                                                               eff.samp
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual     1000
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual     1000
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual     1000
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual     1000
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    750.2
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   1000.0
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
 ## 
 ##                ~us(at.level(type, &quot;r&quot;)):units
 ## 
 ##                                               post.mean l-95% CI u-95% CI
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    0.9462   0.8357    1.067
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1.011   0.8871    1.136
 ##                                               eff.samp
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1024
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1000
 ## 
 ##  Location effects: y ~ type - 1 
 ## 
 ##       post.mean l-95% CI u-95% CI eff.samp  pMCMC    
-## typer   -0.9782  -1.0839  -0.8669    869.9 &lt;0.001 ***
-## types    1.0013   0.9228   1.0892   1000.0 &lt;0.001 ***
+## typer   -0.9847  -1.0905  -0.8749     1000 &lt;0.001 ***
+## types    0.9531   0.8679   1.0464     1000 &lt;0.001 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="josh-example-with-blups" class="section level1">
 <h1>2. Josh example with BLUPs</h1>
+<p><strong>What am I trying to do with this model?</strong></p>
+<p>I’m interested in how students’ engagement, or `<em>rm_engagement</em>, which is repeatedly measured over 3-4 week summer STEM programs, relates to their post-program interest (or <em>post_interest</em>). I’ve been doing this using BLUPs for the rm engagement, and then using these BLUPS to predict post interest. I also include a random effect for the program, though this is not yet added into the MCMCglmm model.</p>
 <pre class="r"><code># load packages that are loaded above
 # library(tidyverse)
 # library(lme4)
@@ -348,7 +350,7 @@ summary(m.test2)
 ##  Thinning interval  = 10
 ##  Sample size  = 1000 
 ## 
-##  DIC: 6459.526 
+##  DIC: 6459.112 
 ## 
 ##  G-structure:  ~us(at.level(type, &quot;r&quot;)):individual
 ## 
@@ -357,38 +359,38 @@ summary(m.test2)
 ##  R-structure:  ~us(at.level(type, &quot;s&quot;)):individual
 ## 
 ##                                                               post.mean
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.33958
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.08832
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.08832
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.82470
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.33857
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.08889
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.08889
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.82681
 ##                                                               l-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual 0.270667
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual 0.008401
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual 0.008401
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual 0.682913
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual 0.269579
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual 0.005316
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual 0.005316
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual 0.676148
 ##                                                               u-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4167
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.1665
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.1665
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1.0131
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4183
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.1701
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.1701
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1.0242
 ##                                                               eff.samp
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    916.4
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   1000.0
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1145.9
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual     1000
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual     1075
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual     1075
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual     1000
 ## 
 ##                ~us(at.level(type, &quot;r&quot;)):units
 ## 
 ##                                               post.mean l-95% CI u-95% CI
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    0.4133   0.3911   0.4345
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    0.4126   0.3891    0.432
 ##                                               eff.samp
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1000
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1187
 ## 
 ##  Location effects: y ~ type - 1 
 ## 
 ##       post.mean l-95% CI u-95% CI eff.samp  pMCMC    
-## typer     2.856    2.768    2.938     1000 &lt;0.001 ***
-## types     3.048    2.909    3.172     1000 &lt;0.001 ***
+## typer     2.858    2.771    2.932    912.2 &lt;0.001 ***
+## types     3.048    2.919    3.187    901.4 &lt;0.001 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>

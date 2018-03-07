@@ -81,6 +81,10 @@ summary(m.test1)
 
 # 2. Josh example with BLUPs
 
+**What am I trying to do with this model?**
+
+I'm interested in how students' engagement, or `*rm_engagement*, which is repeatedly measured over 3-4 week summer STEM programs, relates to their post-program interest (or *post_interest*). I've been doing this using BLUPs for the rm engagement, and then using these BLUPS to predict post interest. I also include a random effect for the program, though this is not yet added into the MCMCglmm model.
+
 ```{r, josh-example-blups}
 # load packages that are loaded above
 # library(tidyverse)
