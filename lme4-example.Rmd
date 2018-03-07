@@ -1,0 +1,38 @@
+---
+title: "lme4 example"
+author: "Joshua Rosenberg"
+date: "3/2/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+```
+
+# 1. Josh example with BLUPs
+
+**What am I trying to do with this model?**
+
+I'm interested in how students' engagement, or `*rm_engagement*, which is repeatedly measured over 3-4 week summer STEM programs, relates to their post-program interest (or *post_interest*). I've been doing this using BLUPs for the rm engagement, and then using these BLUPS to predict post interest. I also include a random effect for the program, though this is not yet added into the MCMCglmm model.
+
+```{r, josh-example-blups}
+library(tidyverse)
+library(lme4)
+
+d <- read_csv("mcmcglmm-data.csv")
+
+m1 <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
+
+d_BLUP <- ranef(m1) %>% 
+    pluck(1) %>% 
+    rownames_to_column("participant_ID") %>% 
+    mutate(participant_ID = as.integer(participant_ID)) %>% 
+    rename(rm_engagement_BLUP = `(Intercept)`) 
+
+d_ind_level <- distinct(d, participant_ID, post_interest, program_ID)
+d_for_m2 <- left_join(d_ind_level, d_BLUP, by = "participant_ID")
+d_for_m2 <- filter(d_for_m2, !is.na(post_interest))
+    
+m2 <- lmer(post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID), data = d_for_m2)
+
+```
