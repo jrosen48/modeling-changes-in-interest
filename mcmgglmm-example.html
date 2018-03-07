@@ -125,11 +125,31 @@ $(document).ready(function () {
 </div>
 
 
+<p>The aim of this analysis is to carry out in a single model (using MCMCglmm) what I have been running in separate models. This document presents my attempt to run three models:</p>
+<ol style="list-style-type: decimal">
+<li>An example from a thread with Tom Houslay/Jarred Hadfield in response to a question to R-sig-mixed-models (<a href="https://stat.ethz.ch/pipermail/r-sig-mixed-models/2017q4/026092.html" class="uri">https://stat.ethz.ch/pipermail/r-sig-mixed-models/2017q4/026092.html</a>)</li>
+<li>My attempt to do the analysis using two separate models using lme4/ best linear unbiased predictors (BLUPs)</li>
+<li>My attempt to fit a similar model as in step 2, but using MCMCglmm</li>
+</ol>
+<p>** Loading packages**</p>
 <pre class="r"><code>library(MCMCglmm)
 ## Loading required package: Matrix
 ## Loading required package: coda
 ## Loading required package: ape
-
+library(lme4)
+library(tidyverse)
+## ── Attaching packages ───────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.4
+## ✔ tidyr   0.8.0     ✔ stringr 1.3.0
+## ✔ readr   1.1.1     ✔ forcats 0.3.0
+## ── Conflicts ──────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ tidyr::expand() masks Matrix::expand()
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<div id="example-from-jarrred-hadfield" class="section level1">
+<h1>1. Example from Jarrred Hadfield</h1>
+<pre class="r"><code>
 N&lt;-500
 # 500 individuals
 
@@ -167,7 +187,7 @@ prior1&lt;-list(R=list(R1=list(V=V, nu=0, covu=TRUE),
 
 str(dat1)
 ## 'data.frame':    1500 obs. of  3 variables:
-##  $ y         : num  0.453 1.645 -0.426 0.82 1.451 ...
+##  $ y         : num  0.433 0.954 2.001 2.396 -1.435 ...
 ##  $ type      : Factor w/ 2 levels &quot;r&quot;,&quot;s&quot;: 2 2 2 2 2 2 2 2 2 2 ...
 ##  $ individual: Factor w/ 500 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 2 3 4 5 6 7 8 9 10 ...
 
@@ -189,7 +209,7 @@ summary(m.test1)
 ##  Thinning interval  = 10
 ##  Sample size  = 1000 
 ## 
-##  DIC: 4546.253 
+##  DIC: 4399.318 
 ## 
 ##  G-structure:  ~us(at.level(type, &quot;r&quot;)):individual
 ## 
@@ -198,65 +218,105 @@ summary(m.test1)
 ##  R-structure:  ~us(at.level(type, &quot;s&quot;)):individual
 ## 
 ##                                                               post.mean
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    1.0508
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual    0.5260
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual    0.5260
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual    0.9929
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    1.0503
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual    0.5303
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual    0.5303
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual    0.9886
 ##                                                               l-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.8403
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4132
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.4132
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.8770
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.8552
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4229
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.4229
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.8803
 ##                                                               u-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    1.248
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual    0.642
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual    0.642
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual    1.123
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   1.2485
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.6437
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.6437
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1.1093
 ##                                                               eff.samp
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    850.1
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   1000.0
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual     1000
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual     1000
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual     1000
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual     1000
 ## 
 ##                ~us(at.level(type, &quot;r&quot;)):units
 ## 
 ##                                               post.mean l-95% CI u-95% CI
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1.109   0.9887    1.265
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    0.9462   0.8357    1.067
 ##                                               eff.samp
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    911.2
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1024
 ## 
 ##  Location effects: y ~ type - 1 
 ## 
 ##       post.mean l-95% CI u-95% CI eff.samp  pMCMC    
-## typer   -1.0422  -1.1448  -0.9263    912.8 &lt;0.001 ***
-## types    0.9238   0.8427   1.0131    981.2 &lt;0.001 ***
+## typer   -0.9782  -1.0839  -0.8669    869.9 &lt;0.001 ***
+## types    1.0013   0.9228   1.0892   1000.0 &lt;0.001 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-<div id="josh-example" class="section level1">
-<h1>Josh example</h1>
-<pre class="r"><code>library(tidyverse)
-## ── Attaching packages ────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
-## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-## ✔ tibble  1.4.2     ✔ dplyr   0.7.4
-## ✔ tidyr   0.8.0     ✔ stringr 1.3.0
-## ✔ readr   1.1.1     ✔ forcats 0.3.0
-## ── Conflicts ───────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ tidyr::expand() masks Matrix::expand()
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-library(MCMCglmm)
+</div>
+<div id="josh-example-with-blups" class="section level1">
+<h1>2. Josh example with BLUPs</h1>
+<pre class="r"><code># load packages that are loaded above
+# library(tidyverse)
+# library(lme4)
 
 d &lt;- read_csv(&quot;mcmcglmm-data.csv&quot;)
 ## Parsed with column specification:
 ## cols(
 ##   participant_ID = col_integer(),
 ##   program_ID = col_integer(),
-##   overall_engagement = col_double(),
-##   overall_pre_interest = col_double()
+##   rm_engagement = col_double(),
+##   post_interest = col_double()
 ## )
 
-# N&lt;-500
-# # 500 individuals
+m1 &lt;- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
+m1
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID)
+##    Data: d
+## REML criterion at convergence: 6298.792
+## Random effects:
+##  Groups         Name        Std.Dev.
+##  participant_ID (Intercept) 0.5695  
+##  program_ID     (Intercept) 0.1140  
+##  Residual                   0.6422  
+## Number of obs: 2970, groups:  participant_ID, 203; program_ID, 9
+## Fixed Effects:
+## (Intercept)  
+##       2.857
+
+d_BLUP &lt;- ranef(m1) %&gt;% 
+    pluck(1) %&gt;% 
+    rownames_to_column(&quot;participant_ID&quot;) %&gt;% 
+    mutate(participant_ID = as.integer(participant_ID)) %&gt;% 
+    rename(rm_engagement_BLUP = `(Intercept)`) 
+
+d_ind_level &lt;- distinct(d, participant_ID, post_interest, program_ID)
+d_for_m2 &lt;- left_join(d_ind_level, d_BLUP, by = &quot;participant_ID&quot;)
+d_for_m2 &lt;- filter(d_for_m2, !is.na(post_interest))
+    
+m2 &lt;- lmer(post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID), data = d_for_m2)
+m2
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID)
+##    Data: d_for_m2
+## REML criterion at convergence: 432.3273
+## Random effects:
+##  Groups     Name        Std.Dev.
+##  program_ID (Intercept) 0.5065  
+##  Residual               0.7498  
+## Number of obs: 181, groups:  program_ID, 9
+## Fixed Effects:
+##        (Intercept)  rm_engagement_BLUP  
+##             3.0199              0.2484</code></pre>
+</div>
+<div id="josh-example-with-mcmcglmm" class="section level1">
+<h1>3. Josh example with MCMCglmm</h1>
+<pre class="r"><code># load packages that are loaded above
+# library(tidyverse)
+# library(MCMCglmm)
+
+# load data that is loaded above
+# d &lt;- read_csv(&quot;mcmcglmm-data.csv&quot;)
 
 V&lt;-matrix(c(1,0.5, 0.5, 1),2,2)
 # 2x2 random/residual-effect covariance matrix
@@ -267,17 +327,13 @@ Vr&lt;-matrix(1,1,1)
 prior1&lt;-list(R=list(R1=list(V=V, nu=0, covu=TRUE),
                     R2=list(V=Vr, nu=0)))
 
-# Preparing data 
-ind &lt;- distinct(d, participant_ID, overall_pre_interest)
-rep &lt;- select(d, participant_ID, overall_engagement)
-
+# Preparing/structuring data 
+ind &lt;- distinct(d, participant_ID, post_interest)
+rep &lt;- select(d, participant_ID, rm_engagement)
 type &lt;- c(rep(&quot;s&quot;, nrow(ind)), rep(&quot;r&quot;, nrow(rep)))
-
-dd &lt;- data.frame(y = c(ind$overall_pre_interest, rep$overall_engagement),
+dd &lt;- data.frame(y = c(ind$post_interest, rep$rm_engagement),
                  type = as.factor(type),
                  individual = as.factor(c(as.character(ind$participant_ID), as.character(rep$participant_ID))))
-
-# dd$y &lt;- scale(dd$y)
 
 m.test2 &lt;- MCMCglmm(y ~ type-1,
                     random=~us(at.level(type,&quot;r&quot;)):individual,
@@ -292,7 +348,7 @@ summary(m.test2)
 ##  Thinning interval  = 10
 ##  Sample size  = 1000 
 ## 
-##  DIC: 6458.854 
+##  DIC: 6459.526 
 ## 
 ##  G-structure:  ~us(at.level(type, &quot;r&quot;)):individual
 ## 
@@ -301,38 +357,38 @@ summary(m.test2)
 ##  R-structure:  ~us(at.level(type, &quot;s&quot;)):individual
 ## 
 ##                                                               post.mean
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.34110
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.08993
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.08993
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.82462
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.33958
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.08832
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.08832
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.82470
 ##                                                               l-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.2649
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.0176
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.0176
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.6653
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual 0.270667
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual 0.008401
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual 0.008401
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual 0.682913
 ##                                                               u-95% CI
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4126
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.1838
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.1838
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   0.9910
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   0.4167
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   0.1665
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   0.1665
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1.0131
 ##                                                               eff.samp
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual   1234.4
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual    798.1
-## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual    798.1
-## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;r&quot;).individual    916.4
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;r&quot;).individual   1000.0
+## at.level(type, &quot;r&quot;).individual:at.level(type, &quot;s&quot;).individual   1000.0
+## at.level(type, &quot;s&quot;).individual:at.level(type, &quot;s&quot;).individual   1145.9
 ## 
 ##                ~us(at.level(type, &quot;r&quot;)):units
 ## 
 ##                                               post.mean l-95% CI u-95% CI
-## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    0.4122   0.3907   0.4318
+## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units    0.4133   0.3911   0.4345
 ##                                               eff.samp
 ## at.level(type, &quot;r&quot;):at.level(type, &quot;r&quot;).units     1000
 ## 
 ##  Location effects: y ~ type - 1 
 ## 
 ##       post.mean l-95% CI u-95% CI eff.samp  pMCMC    
-## typer     2.858    2.776    2.942     1000 &lt;0.001 ***
-## types     3.045    2.903    3.164     1000 &lt;0.001 ***
+## typer     2.856    2.768    2.938     1000 &lt;0.001 ***
+## types     3.048    2.909    3.172     1000 &lt;0.001 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
