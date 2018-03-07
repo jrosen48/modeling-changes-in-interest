@@ -19,7 +19,7 @@ I'm interested in how students' engagement, or `*rm_engagement*, which is repeat
 library(tidyverse)
 library(lme4)
 
-d <- read_csv("mcmcglmm-data.csv")
+d <- read_csv("ex-data.csv")
 
 m1 <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
 
