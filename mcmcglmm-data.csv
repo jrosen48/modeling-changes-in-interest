@@ -1,4 +1,4 @@
-participant_ID,program_ID,overall_engagement,overall_pre_interest
+participant_ID,program_ID,rm_engagement,post_interest
 1001,1,3,4
 1001,1,2.75,4
 1001,1,2.75,4
