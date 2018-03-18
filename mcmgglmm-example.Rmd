@@ -23,9 +23,166 @@ library(lme4)
 library(tidyverse)
 ```
 
+
+```{r, setup-results-fix, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE, 
+                      collapse = TRUE,
+                      error = TRUE,
+                      fig.width = 6,
+                      fig.asp = .618,
+                      out.width = "80%", 
+                      fig.align = "center", 
+                      results = "hold") 
+
+options(knitr.kable.NA = '')
+```
+
+```{r, loading-packages}
+library(tidyverse)
+library(lme4)
+library(corrr)
+library(jmRtools)
+library(tidyLPA)
+library(kableExtra)
+library(sjPlot)
+library(broom)
+library(broom.mixed)
+library(konfound)
+```
+
+```{r, loading-data, eval = F}
+esm <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-esm.csv")
+pre_survey_data_processed <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-pre-survey.csv")
+post_survey_data_partially_processed <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-post-survey.csv")
+video <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-video.csv")
+pqa <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-pqa.csv")
+attendance <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-attendance.csv")
+class_data <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-class-video.csv")
+demographics <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-demographics.csv")
+pm <- read_csv("/Volumes/SCHMIDTLAB/PSE/Data/STEM-IE/STEM-IE-program-match.csv")
+```
+
+```{r, loading-rdata}
+# save.image("~/desktop/sandbox-01.Rdata")
+load("~/desktop/sandbox-01.Rdata")
+```
+
+```{r, processing-attendance-demo-esm-data}
+attendance <- rename(attendance, participant_ID = ParticipantID)
+attendance <- mutate(attendance, prop_attend = DaysAttended / DaysScheduled, 
+                     participant_ID = as.integer(participant_ID))
+attendance <- select(attendance, participant_ID, prop_attend)
+
+demographics <- filter(demographics, participant_ID!= 7187)
+demographics <- left_join(demographics, attendance)
+
+esm$overall_engagement <- jmRtools::composite_mean_maker(esm, hard_working, concentrating, enjoy, interest)
+```
+
+```{r, joining-to-df}
+df <- left_join(esm, pre_survey_data_processed, by = "participant_ID") # df & post-survey
+df <- left_join(df, video, by = c("program_ID", "response_date", "sociedad_class", "signal_number")) # df & video
+df <- left_join(df, demographics, by = c("participant_ID", "program_ID")) # df and demographics
+```
+
+```{r, proc-beep-actvariables, echo = F}
+df$participant_ID <- as.factor(df$participant_ID)
+df$program_ID <- as.factor(df$program_ID)
+df$beep_ID <- as.factor(df$beep_ID)
+df$beep_ID_new <- as.factor(df$beep_ID_new)
+
+df$youth_activity_rc <- ifelse(df$youth_activity == "Off Task", "Not Focused", df$youth_activity)
+
+df$youth_activity_rc <- ifelse(df$youth_activity_rc == "Student Presentation" | df$youth_activity_rc == "Problem Solving", "Creating Product", df$youth_activity_rc)
+
+df$youth_activity_rc <- ifelse(df$youth_activity_rc == "Showing Video", "Program Staff Led", df$youth_activity_rc)
+
+df$youth_activity_rc <- as.factor(df$youth_activity_rc)
+
+df$youth_activity_rc <- forcats::fct_relevel(df$youth_activity_rc, "Not Focused")
+
+df$relevance <- jmRtools::composite_mean_maker(df, use_outside, future_goals, important)
+```
+
+```{r proc-demographics}
+df$urm <- ifelse(df$race %in% c("White", "Asian"), 0, 1)
+df$race <- as.factor(df$race)
+df$race <- fct_lump(df$race, n = 2)
+df$race_other <- fct_relevel(df$race, "Other")
+df$gender_female <- as.factor(df$gender) # female is comparison_group
+df$gender_female <- ifelse(df$gender_female == "F", 1, 
+                           ifelse(df$gender_female == "M", 0, NA))
+```
+
+```{r, proc-pqa-data}
+pqa <- mutate(pqa, 
+              active = active_part_1 + active_part_2,
+              ho_thinking = ho_thinking_1 + ho_thinking_2 + ho_thinking_3,
+              belonging = belonging_1 + belonging_2,
+              agency = agency_1 + agency_2 + agency_3 + agency_4,
+              youth_development_overall = active_part_1 + active_part_2 + ho_thinking_1 + ho_thinking_2 + ho_thinking_3 + belonging_1 + belonging_2 + agency_1 + agency_2 + agency_3 + agency_4,
+              making_observations = stem_sb_8,
+              data_modeling = stem_sb_2 + stem_sb_3 + stem_sb_9,
+              interpreting_communicating = stem_sb_6,
+              generating_data = stem_sb_4,
+              asking_questions = stem_sb_1,
+              stem_sb = stem_sb_1 + stem_sb_2 + stem_sb_3 + stem_sb_4 + stem_sb_5 + stem_sb_6 + stem_sb_7 + stem_sb_8 + stem_sb_9)
+
+pqa$sociedad_class <- ifelse(pqa$eighth_math == 1, "8th Math",
+                             ifelse(pqa$seventh_math == 1, "7th Math",
+                                    ifelse(pqa$sixth_math == 1, "6th Math",
+                                           ifelse(pqa$robotics == 1, "Robotics",
+                                                  ifelse(pqa$dance == 1, "Dance", NA)))))
+
+pqa <- rename(pqa, 
+              program_ID = SiteIDNumeric,
+              response_date = resp_date,
+              signal_number = signal)
+
+pqa$program_ID <- as.character(pqa$program_ID)
+
+df <- left_join(df, pqa, by = c("response_date", "program_ID", "signal_number", "sociedad_class"))
+```
+
+```{r, proc-vars-for-modeling}
+df <- df %>% 
+  mutate(dm_cog_eng = learning,
+         dm_beh_eng = hard_working,
+         dm_aff_eng = enjoy,
+         dm_challenge = challenge,
+         dm_competence = good_at) %>% 
+  rename(ssb_predict = stem_sb_1,
+         ssb_model = stem_sb_2 ,
+         ssb_analyze = stem_sb_3,
+         ssb_measure = stem_sb_4,
+         ssb_tools = stem_sb_5,
+         ssb_precision = stem_sb_6,
+         ssb_vocabulary = stem_sb_7,
+         ssb_classification = stem_sb_8,
+         ssb_symbols = stem_sb_9) %>% 
+  mutate(dm_ask = ssb_predict,
+         dm_obs = ssb_classification,
+         dm_gen = ifelse(ssb_measure == 1 | ssb_precision == 1, 1, 0),
+         dm_mod = ssb_model,
+         dm_com = ifelse(ssb_symbols == 1 | ssb_analyze == 1, 1, 0)) %>% 
+  mutate(ov_cog_eng = (important + future_goals) / 2,
+         ov_beh_eng = (hard_working + concentrating) / 2,
+         ov_aff_eng = (enjoy + interest) / 2) %>% 
+  mutate(dm_composite = dm_ask + dm_obs + dm_gen + dm_mod + dm_com)
+
+df$dm_overall_eng <- composite_mean_maker(df, dm_cog_eng, dm_beh_eng, dm_aff_eng)
+
+df <- mutate(df, inquiry_based = ifelse(youth_activity_rc == "Creating Product" | youth_activity_rc == "Lab Activity", 1, 0),
+             inquiry_based_three = ifelse(youth_activity_rc == "Creating Product" | youth_activity_rc == "Lab Activity", "inquiry-based",
+                                          ifelse(youth_activity_rc == "Not Focused", "not-focused", "other"))) 
+```
+
+
 # 1. Example from Jarrred Hadfield
 
-```{r, example-from-jarred-hadfield}
+```{r, example-from-jarred-hadfield, eval = F}
 
 N<-500
 # 500 individuals
@@ -104,7 +261,7 @@ d_BLUP <- ranef(m1) %>%
 d_ind_level <- distinct(d, participant_ID, post_interest, program_ID)
 d_for_m2 <- left_join(d_ind_level, d_BLUP, by = "participant_ID")
 d_for_m2 <- filter(d_for_m2, !is.na(post_interest))
-    
+
 m2 <- lmer(post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID), data = d_for_m2)
 m2
 
@@ -112,7 +269,7 @@ m2
 
 # 3. Josh example with MCMCglmm
 
-```{r, josh-example-mcmc}
+```{r, josh-example-mcmc, eval = F}
 # load packages that are loaded above
 # library(tidyverse)
 # library(MCMCglmm)
@@ -145,4 +302,122 @@ m.test2 <- MCMCglmm(y ~ type-1,
                     verbose=FALSE)
 
 summary(m.test2)
+```
+
+# 4. Example fom Tom 
+
+```{r, example-from-Tom, eval = F}
+prior2 = list(R =list(V = diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
+              G =list(G1 = list(V = diag(2), nu = 2,
+                                alpha.mu = rep(0,2),
+                                alpha.V = diag(25^2, 2, 2))))
+
+# remove redundancy by only retaining a single post-interest value per individual/program combination
+d_red <- d %>% 
+    group_by(participant_ID, program_ID) %>% 
+    mutate(rownum = row_number()) %>% 
+    mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
+
+m.test3i <- MCMCglmm(cbind(rm_engagement, post_interest) ~ trait -1,
+                    random=~us(trait):participant_ID,
+                    rcov=~idh(trait):units,
+                    family = rep("gaussian",2),
+                    data=as.data.frame(d_red),
+                    prior=prior2,
+                    verbose= FALSE)
+
+summary(m.test3)
+
+m.test3_cor <- m.test3$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
+    (sqrt(m.test3$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
+         sqrt(m.test3$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
+
+plot(m.test3_cor)
+HPDinterval(m.test3_cor)
+posterior.mode(m.test3_cor)
+```
+
+# 5. example from Tom with program effects
+
+```{r, example-from-tom-2, eval = F}
+prior3 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
+             G =list(G1 =list(V =diag(2), nu = 2,
+                              alpha.mu =rep(0,2),
+                              alpha.V =diag(25^2,2,2)),
+                     G2 =list(V =diag(2), nu = 2,
+                              alpha.mu =rep(0,2),
+                              alpha.V =diag(25^2,2,2))))
+
+m.test4 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ trait,
+                    random=~us(trait):participant_ID +
+                      us(trait):program_ID, 
+                    rcov=~idh(trait):units, # this denotes response vars varying across response rows
+                    family = rep("gaussian",2),
+                    data=as.data.frame(d_red),
+                    prior=prior3,
+                    verbose=FALSE)
+summary(m.test4)
+
+
+m.test4_cor <- m.test4$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
+  (sqrt(m.test4$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
+     sqrt(m.test4$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
+
+plot(m.test4_cor)
+HPDinterval(m.test4_cor)
+posterior.mode(m.test4_cor)
+```
+
+# 6. josh new example
+
+```{r}
+ps <- read_csv("~/Google Drive/1_Research/dissertation/rosenberg-diss/STEM-IE-post-survey.csv")
+df <- select(df, participant_ID, program_ID, beep_ID = beep_ID_new, overall_engagement)
+str(ps$participant_ID)
+d$participant_ID <- as.integer(d$participant_ID)
+d <- left_join(d, ps, by = "participant_ID")
+d$program_ID <- as.integer(d$program_ID)
+d <- rename(d, )
+
+# Preparing/structuring data 
+ind <- distinct(d, participant_ID, post_interest)
+rep <- select(d, participant_ID, rm_engagement)
+type <- c(rep("s", nrow(ind)), rep("r", nrow(rep)))
+dd <- data.frame(y = c(ind$post_interest, rep$rm_engagement),
+                 type = as.factor(type),
+                 individual = as.factor(c(as.character(ind$participant_ID), as.character(rep$participant_ID))))
+
+d_red <- d %>% 
+    group_by(participant_ID, program_ID) %>% 
+    mutate(rownum = row_number()) %>% 
+    mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
+```
+
+```{r, josh-new-example}
+prior3 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
+             G =list(G1 =list(V =diag(2), nu = 2,
+                              alpha.mu =rep(0,2),
+                              alpha.V =diag(25^2,2,2)),
+                     G2 =list(V =diag(2), nu = 2,
+                              alpha.mu =rep(0,2),
+                              alpha.V =diag(25^2,2,2))))
+
+m.test4 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ trait,
+                    random=~us(trait):participant_ID +
+                      us(trait):program_ID, 
+                    rcov=~idh(trait):units, # this denotes response vars varying across response rows
+                    family = rep("gaussian",2),
+                    data=as.data.frame(d_red),
+                    prior=prior3,
+                    verbose=FALSE)
+summary(m.test4)
+
+
+m.test4_cor <- m.test4$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
+  (sqrt(m.test4$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
+     sqrt(m.test4$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
+
+plot(m.test4_cor)
+HPDinterval(m.test4_cor)
+posterior.mode(m.test4_cor)
 ```

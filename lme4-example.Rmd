@@ -44,8 +44,9 @@ library(brms)
 
 d <- read_csv("ex-data.csv")
 
-bf_rm_engagement <- bf(post_interest ~ 1 + (1|p|fosternest) + (1 | program_ID))
-bf_interset <- bf(rm_engagement ~ 1 + (1 | program_ID))
+bf_rm_engagement <- bf(post_interest ~ 1 + (1 | participant_ID) + (1 | program_ID))
+bf_interest <- bf(rm_engagement ~ 1 + (1 | program_ID))
 
 fit <- brm(bf_rm_engagement + bf_interest, data = d, chains = 2, cores = 4)
+fit
 ```
