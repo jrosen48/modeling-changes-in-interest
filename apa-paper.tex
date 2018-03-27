@@ -219,39 +219,25 @@ relating repeated measures engagement and post interest. The first
 (model 0a) does not include any covariates while the second (model 0b)
 adds gender, under-represented minority (URM) status, and pre-interest.
 
-\begin{verbatim}
-## Linear mixed model fit by REML ['lmerMod']
-## Formula: post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm +  
-##     pre_interest + (1 | program_ID)
-##    Data: d_for_m2
-## 
-## REML criterion at convergence: 307
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -4.2017 -0.4728  0.0722  0.5639  2.7381 
-## 
-## Random effects:
-##  Groups     Name        Variance Std.Dev.
-##  program_ID (Intercept) 0.0249   0.1578  
-##  Residual               0.4681   0.6842  
-## Number of obs: 141, groups:  program_ID, 9
-## 
-## Fixed effects:
-##                    Estimate Std. Error t value
-## (Intercept)          1.6870     0.2782   6.064
-## rm_engagement_BLUP   0.4669     0.1096   4.261
-## gender_female       -0.0933     0.1208  -0.772
-## urm                 -0.2056     0.1630  -1.262
-## pre_interest         0.5309     0.0731   7.263
-## 
-## Correlation of Fixed Effects:
-##             (Intr) r__BLU gndr_f urm   
-## rm_ngg_BLUP  0.056                     
-## gender_feml -0.210  0.158              
-## urm         -0.458 -0.028 -0.118       
-## pre_interst -0.809 -0.106  0.047 -0.005
-\end{verbatim}
+\begin{tabular}{l|l|l|r|r|r}
+\hline
+effect & group & term & estimate & std.error & statistic\\
+\hline
+fixed & fixed & (Intercept) & 1.6870529 & 0.2782234 & 6.0636625\\
+\hline
+fixed & fixed & rm\_engagement\_BLUP & 0.4668654 & 0.1095668 & 4.2610108\\
+\hline
+fixed & fixed & gender\_female & -0.0932999 & 0.1207901 & -0.7724133\\
+\hline
+fixed & fixed & urm & -0.2056539 & 0.1629742 & -1.2618804\\
+\hline
+fixed & fixed & pre\_interest & 0.5309028 & 0.0730997 & 7.2627265\\
+\hline
+ran\_pars & program\_ID & sd\_(Intercept) & 0.1577843 & NA & NA\\
+\hline
+ran\_pars & Residual & sd\_Observation & 0.6841791 & NA & NA\\
+\hline
+\end{tabular}
 
 \begin{verbatim}
 ##               Effect   Rsq upper.CL lower.CL
