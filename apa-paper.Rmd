@@ -144,7 +144,7 @@ m0bii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm + pre
 ```
 
 ```{r, m0b-res, cache = FALSE, eval = TRUE}
-tidy(m0bii) %>% knitr::kable()
+summary(m0bii)
 ```
 
 ```{r, cache = TRUE, eval = TRUE}
