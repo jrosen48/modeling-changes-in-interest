@@ -99,11 +99,9 @@ d_red <- d %>%
     mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
 ```
 
-## Model 0
+## Maximum Likelihood Estimation
 
 This model uses Maximum Likelihood (ML) estimation. Note that this model does not account for the error in the predictions for engagement when relating repeated measures engagement and post interest. The first (model 0a) does not include any covariates while the second (model 0b) adds gender, under-represented minority (URM) status, and pre-interest. 
-
-### Model 0a
 
 ```{r, model0a, eval = FALSE}
 m0ai <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
@@ -125,12 +123,12 @@ summary(m0ai)
 summary(m0aii)
 ```
 
-```{r, cache = TRUE}
+```{r, cache = TRUE, eval = FALSE}
 r2glmm::r2beta(m0aii)
 cat("correlation between BLUP and interest", sqrt(.089))
 ```
 
-```{r, model0b}
+```{r, model0b, eval = TRUE}
 m0bi <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
 
 d_BLUP_2 <- ranef(m0bi) %>% 
@@ -146,17 +144,17 @@ d_for_m2 <- filter(d_for_m2, !is.na(post_interest))
 m0bii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm + pre_interest + (1 | program_ID), data = d_for_m2)
 ```
 
-```{r, m0b-res, cache = TRUE}
-summary(m0bi)
+```{r, m0b-res, cache = TRUE, eval = TRUE}
+# summary(m0bi)
 summary(m0bii)
 ```
 
-```{r, cache = TRUE}
+```{r, cache = TRUE, eval = TRUE}
 r2glmm::r2beta(m0bii)
 cat("correlation between BLUP and interest", sqrt(.112))
 ```
 
-## Model 1
+## Markov Chain Monte Carlo Estimation
 
 These models use Markov Chain Monte Carlo (MCMC) estimation (via the **MCMCglmm** package). The first (model 1a) does not include any covariates while the second (model 1b) adds gender, under-represented minority (URM) status, and pre-interest.
 
@@ -196,11 +194,7 @@ These models use Markov Chain Monte Carlo (MCMC) estimation (via the **MCMCglmm*
 <!-- posterior.mode(m1_cor) -->
 <!-- ``` -->
 
-### Model 2a
-
-This model is identical to model 1a, except it adds fixed effects for a) pre-interest (the same measure as for post-interest, but given to youth before, rather than after).
-
-```{r, model2a, cache = TRUE}
+```{r, model2a, cache = TRUE, eval = TRUE}
 d_red <- filter(d_red,
                 !is.na(gender_female) & !is.na(urm) & !is.na(pre_interest))
 
@@ -223,7 +217,7 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~
                verbose=FALSE)
 ```
 
-```{r, m2b-res}
+```{r, m2b-res, eval = TRUE}
 summary(m2)
 # plot(m2)
 
