@@ -185,6 +185,10 @@ $(document).ready(function () {
 ## Correlation of Fixed Effects:
 ##             (Intr)
 ## rm_ngg_BLUP -0.012</code></pre>
+<pre><code>##               Effect   Rsq upper.CL lower.CL
+## 1              Model 0.089    0.186    0.024
+## 2 rm_engagement_BLUP 0.089    0.186    0.024
+## correlation between BLUP and interest 0.2983287</code></pre>
 <pre><code>## Linear mixed model fit by REML ['lmerMod']
 ## Formula: rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID)
 ##    Data: d
@@ -236,6 +240,13 @@ $(document).ready(function () {
 ## gender_feml -0.210  0.158              
 ## urm         -0.458 -0.028 -0.118       
 ## pre_interst -0.809 -0.106  0.047 -0.005</code></pre>
+<pre><code>##               Effect   Rsq upper.CL lower.CL
+## 1              Model 0.392    0.510    0.288
+## 5       pre_interest 0.296    0.415    0.184
+## 2 rm_engagement_BLUP 0.112    0.221    0.034
+## 4                urm 0.011    0.071    0.000
+## 3      gender_female 0.004    0.052    0.000
+## correlation between BLUP and interest 0.334664</code></pre>
 </div>
 </div>
 <div id="model-1" class="section level1">
@@ -351,11 +362,24 @@ $(document).ready(function () {
 <pre><code>##      var1 
 ## 0.2806292</code></pre>
 </div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<ul>
+<li>BLUPs / lme4 model
+<ul>
+<li>Correlation between BLUPs for engagement and post-interest without covariates: .298</li>
+<li>Correlation between BLUPs for engagement and post-interest with covariates (pre-interest, gender, and URM status): .334</li>
+</ul></li>
+<li>MCMC / mcmcGLMM model
+<ul>
+<li>Correlation between engagement and post-interest without covariates: .248</li>
+<li>Correlation between engagement and post-interest with covariates (pre-interest, gender, and URM status): .280</li>
+</ul></li>
+</ul>
+</div>
 <div id="questions-and-future-directions" class="section level1">
 <h1>Questions and future directions</h1>
-<ul>
-<li>In the <strong>lme4</strong> models, we used the BLUPs in a separate linear model and obtained a regression coefficient relating repeated measures engagement to post interest, whereas in the <strong>MCMCglmm</strong> models we modeled the correlation of the random effects for repeated measures engagement and interest. One way to compare them is to use correlations instead of a linear model to examine the relations between the predictions (BLUPs) for repeated measures engagement and interest, but this does not allow us to account for covariates. To address this, could a partial correlation be examined (possibly using the <strong>r2glmm</strong> package or a manual approach)? Or, is there another way to transform the beta coefficient into a partial correlation coefficient? Or, is there a way to interpret the correlation between repeated measures engagement and post interest in the <strong>MCMCglmm</strong> models as a regression coefficient?</li>
-</ul>
+<p>To calculate these correlations, I calculated the partial R^2 (i.e., the change in R-squared when adding the predictor) for the BLUPs for engagement, which I think helps to compare the results with the two approaches. However, I’m not sure this is correct. In the <strong>lme4</strong> models, we used the BLUPs in a separate linear model and obtained a regression coefficient relating repeated measures engagement to post interest, whereas in the <strong>MCMCglmm</strong> models we modeled the correlation of the random effects for repeated measures engagement and interest. One way to compare them is to use correlations instead of a linear model to examine the relations between the predictions (BLUPs) for repeated measures engagement and interest, but this does not allow us to account for covariates. To address this, could a partial correlation be examined (possibly using the <strong>r2glmm</strong> package or a manual approach)? Or, is there another way to transform the beta coefficient into a partial correlation coefficient? Or, is there a way to interpret the correlation between repeated measures engagement and post interest in the <strong>MCMCglmm</strong> models as a regression coefficient?</p>
 </div>
 
 

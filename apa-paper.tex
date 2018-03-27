@@ -1,0 +1,541 @@
+\documentclass[man]{apa6}
+
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+
+% Table formatting
+\usepackage{longtable, booktabs}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\begin{center}\begin{threeparttable}}
+%   {\end{threeparttable}\end{center}\end{landscape}}
+
+\newenvironment{lltable}
+  {\begin{landscape}\begin{center}\begin{ThreePartTable}}
+  {\end{ThreePartTable}\end{center}\end{landscape}}
+
+  \usepackage{ifthen} % Only add declarations when endfloat package is loaded
+  \ifthenelse{\equal{\string man}{\string man}}{%
+   \DeclareDelayedFloatFlavor{ThreePartTable}{table} % Make endfloat play with longtable
+   % \DeclareDelayedFloatFlavor{ltable}{table} % Make endfloat play with lscape
+   \DeclareDelayedFloatFlavor{lltable}{table} % Make endfloat play with lscape & longtable
+  }{}%
+
+
+
+% The following enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand\getlongtablewidth{%
+ \begingroup
+  \ifcsname LT@\roman{LT@tables}\endcsname
+  \global\longtablewidth=0pt
+  \renewcommand\LT@entry[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}%
+  \@nameuse{LT@\roman{LT@tables}}%
+  \fi
+\endgroup}
+
+
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            pdfauthor={},
+            pdftitle={How engagement during out-of-school time STEM programs predicts changes in motivation in STEM},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=black,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+\setlength{\parindent}{0pt}
+%\setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+
+
+% Manuscript styling
+\captionsetup{font=singlespacing,justification=justified}
+\usepackage{csquotes}
+\usepackage{upgreek}
+
+
+
+\usepackage{tikz} % Variable definition to generate author note
+
+% fix for \tightlist problem in pandoc 1.14
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% Essential manuscript parts
+  \title{How engagement during out-of-school time STEM programs predicts changes
+in motivation in STEM}
+
+  \shorttitle{Engagement in STEM}
+
+
+  \author{Joshua Rosenberg\textsuperscript{1}, Patrick Beymer\textsuperscript{1}, \& Jennifer Schmidt\textsuperscript{1}}
+
+  % \def\affdep{{"", "", ""}}%
+  % \def\affcity{{"", "", ""}}%
+
+  \affiliation{
+    \vspace{0.5cm}
+          \textsuperscript{1} Michigan State University  }
+
+  \authornote{
+    This paper is to be presented at the 2018 Annual Meeting of the American
+    Educational Research Association, New York, NY.
+    
+    Correspondence concerning this article should be addressed to Joshua
+    Rosenberg, Postal address. E-mail:
+    \href{mailto:jrosen@msu.edu}{\nolinkurl{jrosen@msu.edu}}
+  }
+
+
+  \abstract{Enter abstract.}
+  \keywords{Engagement \\
+
+    \indent Word count: X
+  }
+
+
+
+
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
+\begin{document}
+
+\maketitle
+
+\setcounter{secnumdepth}{0}
+
+
+
+\section{Introduction}\label{introduction}
+
+\section{Literature Review}\label{literature-review}
+
+\subsection{Out-of-school time STEM
+programs}\label{out-of-school-time-stem-programs}
+
+Out-of-school time (OST) STEM programs have started focusing on STEM
+content due to the lack of individuals choosing to focus on STEM
+careers. Although adaptive outcomes have been found while youth are
+attending OST STEM programs, little research has focused on outcomes
+after the program has ended. Often, the goal of OST STEM programs is to
+increase youth's long-term interest and competence in STEM. Therefore,
+examining youth interest and competence in STEM after spending time in
+the program is key. Framing the study around Emergent Motivation Theory
+(Csikszentmihalyi, 1990), we use a profile-oriented approach to
+investigate the relationship between youths' momentary engagement and
+their interest and perceived competence at program completion.
+
+\section{The Present Study}\label{the-present-study}
+
+Research questions include: 1) What momentary profiles emerge? 2) What
+profiles are predictive of interest and perceived competence after
+attending an OST STEM program?
+
+\section{Method}\label{method}
+
+We report how we determined our sample size, all data exclusions (if
+any), all manipulations, and all measures in the study.
+
+\subsection{Participants}\label{participants}
+
+Data were collected from 203 youth in nine OST programs, each lasting
+four weeks. Through an Experience Sampling Method (ESM) approach, youth
+were signaled through mobile phones, yielding 2,463 total ESM responses.
+Youth were asked to complete a survey before and after the program. A
+two-step cluster analysis was used to identity momentary profiles.
+Multilevel Modeling was used to account for the nesting of momentary
+responses within the nine OST STEM programs.
+
+\subsection{Material}\label{material}
+
+\subsection{Procedure}\label{procedure}
+
+\subsection{Data analysis}\label{data-analysis}
+
+We used R (Version 3.4.3; R Core Team, 2017) and the R-package
+\emph{papaja} (Version 0.1.0.9655; Aust \& Barth, 2017) for all our
+analyses.
+
+\section{Results}\label{results}
+
+\subsection{Model 0}\label{model-0}
+
+This model uses Maximum Likelihood (ML) estimation. Note that this model
+does not account for the error in the predictions for engagement when
+relating repeated measures engagement and post interest. The first
+(model 0a) does not include any covariates while the second (model 0b)
+adds gender, under-represented minority (URM) status, and pre-interest.
+
+\subsubsection{Model 0a}\label{model-0a}
+
+\begin{verbatim}
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID)
+##    Data: d
+## 
+## REML criterion at convergence: 6298.8
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.4043 -0.5274  0.1040  0.5904  3.6900 
+## 
+## Random effects:
+##  Groups         Name        Variance Std.Dev.
+##  participant_ID (Intercept) 0.3244   0.5695  
+##  program_ID     (Intercept) 0.0130   0.1140  
+##  Residual                   0.4124   0.6422  
+## Number of obs: 2970, groups:  participant_ID, 203; program_ID, 9
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)   2.8566     0.0573   49.85
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID)
+##    Data: d_for_m1
+## 
+## REML criterion at convergence: 389.5
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -3.14505 -0.58832  0.07935  0.68551  2.28150 
+## 
+## Random effects:
+##  Groups     Name        Variance Std.Dev.
+##  program_ID (Intercept) 0.2028   0.4503  
+##  Residual               0.5999   0.7745  
+## Number of obs: 159, groups:  program_ID, 9
+## 
+## Fixed effects:
+##                    Estimate Std. Error t value
+## (Intercept)          3.0744     0.1629  18.869
+## rm_engagement_BLUP   0.4818     0.1160   4.152
+## 
+## Correlation of Fixed Effects:
+##             (Intr)
+## rm_ngg_BLUP -0.012
+\end{verbatim}
+
+\begin{verbatim}
+##               Effect   Rsq upper.CL lower.CL
+## 1              Model 0.089    0.186    0.024
+## 2 rm_engagement_BLUP 0.089    0.186    0.024
+## correlation between BLUP and interest 0.2983287
+\end{verbatim}
+
+\begin{verbatim}
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID)
+##    Data: d
+## 
+## REML criterion at convergence: 6298.8
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.4043 -0.5274  0.1040  0.5904  3.6900 
+## 
+## Random effects:
+##  Groups         Name        Variance Std.Dev.
+##  participant_ID (Intercept) 0.3244   0.5695  
+##  program_ID     (Intercept) 0.0130   0.1140  
+##  Residual                   0.4124   0.6422  
+## Number of obs: 2970, groups:  participant_ID, 203; program_ID, 9
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)   2.8566     0.0573   49.85
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm +  
+##     pre_interest + (1 | program_ID)
+##    Data: d_for_m2
+## 
+## REML criterion at convergence: 307
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.2017 -0.4728  0.0722  0.5639  2.7381 
+## 
+## Random effects:
+##  Groups     Name        Variance Std.Dev.
+##  program_ID (Intercept) 0.0249   0.1578  
+##  Residual               0.4681   0.6842  
+## Number of obs: 141, groups:  program_ID, 9
+## 
+## Fixed effects:
+##                    Estimate Std. Error t value
+## (Intercept)          1.6870     0.2782   6.064
+## rm_engagement_BLUP   0.4669     0.1096   4.261
+## gender_female       -0.0933     0.1208  -0.772
+## urm                 -0.2056     0.1630  -1.262
+## pre_interest         0.5309     0.0731   7.263
+## 
+## Correlation of Fixed Effects:
+##             (Intr) r__BLU gndr_f urm   
+## rm_ngg_BLUP  0.056                     
+## gender_feml -0.210  0.158              
+## urm         -0.458 -0.028 -0.118       
+## pre_interst -0.809 -0.106  0.047 -0.005
+\end{verbatim}
+
+\begin{verbatim}
+##               Effect   Rsq upper.CL lower.CL
+## 1              Model 0.392    0.510    0.288
+## 5       pre_interest 0.296    0.415    0.184
+## 2 rm_engagement_BLUP 0.112    0.221    0.034
+## 4                urm 0.011    0.071    0.000
+## 3      gender_female 0.004    0.052    0.000
+## correlation between BLUP and interest 0.334664
+\end{verbatim}
+
+\subsection{Model 1}\label{model-1}
+
+These models use Markov Chain Monte Carlo (MCMC) estimation (via the
+\textbf{MCMCglmm} package). The first (model 1a) does not include any
+covariates while the second (model 1b) adds gender, under-represented
+minority (URM) status, and pre-interest.
+
+\subsubsection{Model 1a}\label{model-1a}
+
+This is a bivariate model predicting repeated measures engagement
+(\texttt{rm\_engagement}) and post interest (\texttt{post\_interest}).
+Two random effects are used, one for the participant random effect, and
+one for the program random effect. The correlation among the two
+outcomes is examined and appears to take on a positive, non-zero value
+with a 95\% credible interval (slightly different from a confidence
+interval) that does not include zero.
+
+\begin{verbatim}
+## 
+##  Iterations = 3001:12991
+##  Thinning interval  = 10
+##  Sample size  = 1000 
+## 
+##  DIC: 10986.4 
+## 
+##  G-structure:  ~us(trait):participant_ID
+## 
+##                                                      post.mean l-95% CI
+## traitrm_engagement:traitrm_engagement.participant_ID    0.3304  0.26256
+## traitpost_interest:traitrm_engagement.participant_ID    0.1258  0.05087
+## traitrm_engagement:traitpost_interest.participant_ID    0.1258  0.05087
+## traitpost_interest:traitpost_interest.participant_ID    0.7066  0.57165
+##                                                      u-95% CI eff.samp
+## traitrm_engagement:traitrm_engagement.participant_ID   0.4073   1000.0
+## traitpost_interest:traitrm_engagement.participant_ID   0.1936    880.4
+## traitrm_engagement:traitpost_interest.participant_ID   0.1936    880.4
+## traitpost_interest:traitpost_interest.participant_ID   0.8548    283.1
+## 
+##                ~us(trait):program_ID
+## 
+##                                                  post.mean   l-95% CI
+## traitrm_engagement:traitrm_engagement.program_ID   0.02706  5.099e-11
+## traitpost_interest:traitrm_engagement.program_ID   0.01136 -1.669e-01
+## traitrm_engagement:traitpost_interest.program_ID   0.01136 -1.669e-01
+## traitpost_interest:traitpost_interest.program_ID   1.58567  4.520e-01
+##                                                  u-95% CI eff.samp
+## traitrm_engagement:traitrm_engagement.program_ID  0.09114    301.5
+## traitpost_interest:traitrm_engagement.program_ID  0.16929   1000.0
+## traitrm_engagement:traitpost_interest.program_ID  0.16929   1000.0
+## traitpost_interest:traitpost_interest.program_ID  3.50657   1000.0
+## 
+##  R-structure:  ~idh(trait):units
+## 
+##                          post.mean l-95% CI u-95% CI eff.samp
+## traitrm_engagement.units    0.4132   0.3917   0.4336    887.7
+## traitpost_interest.units    0.0001   0.0001   0.0001      0.0
+## 
+##  Location effects: cbind(rm_engagement, post_interest) ~ -1 + trait 
+## 
+##                    post.mean l-95% CI u-95% CI eff.samp  pMCMC    
+## traitrm_engagement     2.861    2.722    3.007     1222 <0.001 ***
+## traitpost_interest     3.088    2.226    3.998     1115 <0.001 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+##      var1 
+## 0.2426489
+\end{verbatim}
+
+\subsubsection{Model 2a}\label{model-2a}
+
+This model is identical to model 1a, except it adds fixed effects for a)
+pre-interest (the same measure as for post-interest, but given to youth
+before, rather than after).
+
+\begin{verbatim}
+## 
+##  Iterations = 3001:12991
+##  Thinning interval  = 10
+##  Sample size  = 1000 
+## 
+##  DIC: 9874.073 
+## 
+##  G-structure:  ~us(trait):participant_ID
+## 
+##                                                      post.mean l-95% CI
+## traitrm_engagement:traitrm_engagement.participant_ID    0.3366  0.26372
+## traitpost_interest:traitrm_engagement.participant_ID    0.1186  0.04197
+## traitrm_engagement:traitpost_interest.participant_ID    0.1186  0.04197
+## traitpost_interest:traitpost_interest.participant_ID    0.6796  0.55075
+##                                                      u-95% CI eff.samp
+## traitrm_engagement:traitrm_engagement.participant_ID   0.4172    832.9
+## traitpost_interest:traitrm_engagement.participant_ID   0.1935    803.3
+## traitrm_engagement:traitpost_interest.participant_ID   0.1935    803.3
+## traitpost_interest:traitpost_interest.participant_ID   0.8232    759.7
+## 
+##                ~us(trait):program_ID
+## 
+##                                                  post.mean   l-95% CI
+## traitrm_engagement:traitrm_engagement.program_ID  0.026367  4.113e-08
+## traitpost_interest:traitrm_engagement.program_ID -0.009697 -1.804e-01
+## traitrm_engagement:traitpost_interest.program_ID -0.009697 -1.804e-01
+## traitpost_interest:traitpost_interest.program_ID  1.659889  4.548e-01
+##                                                  u-95% CI eff.samp
+## traitrm_engagement:traitrm_engagement.program_ID  0.08497    165.0
+## traitpost_interest:traitrm_engagement.program_ID  0.15101    855.6
+## traitrm_engagement:traitpost_interest.program_ID  0.15101    855.6
+## traitpost_interest:traitpost_interest.program_ID  3.37140   1000.0
+## 
+##  R-structure:  ~idh(trait):units
+## 
+##                          post.mean l-95% CI u-95% CI eff.samp
+## traitrm_engagement.units    0.4092   0.3881   0.4326     1000
+## traitpost_interest.units    0.0001   0.0001   0.0001        0
+## 
+##  Location effects: cbind(rm_engagement, post_interest) ~ -1 + trait + gender_female + urm + pre_interest 
+## 
+##                    post.mean l-95% CI u-95% CI eff.samp  pMCMC    
+## traitrm_engagement   2.39713  1.93197  2.75575    902.7 <0.001 ***
+## traitpost_interest   2.63481  1.73029  3.60087   1000.0  0.002 ** 
+## gender_female       -0.09363 -0.25923  0.06394    824.3  0.254    
+## urm                 -0.03994 -0.26898  0.18817   1227.2  0.734    
+## pre_interest         0.17536  0.08269  0.27574    690.3 <0.001 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+##     var1 
+## 0.234083
+\end{verbatim}
+
+\subsection{Summary of findings}\label{summary-of-findings}
+
+To calculate these correlations, I calculated the partial R\^{}2 (i.e.,
+the change in R-squared when adding the predictor) for the BLUPs for
+engagement, which I think helps to compare the results with the two
+approaches.
+
+\begin{itemize}
+\tightlist
+\item
+  BLUPs / lme4 model
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Correlation between BLUPs for engagement and post-interest without
+    covariates: .298
+  \item
+    Correlation between BLUPs for engagement and post-interest with
+    covariates (pre-interest, gender, and URM status): .334
+  \end{itemize}
+\item
+  MCMC / mcmcGLMM model
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Correlation between engagement and post-interest without covariates:
+    .248
+  \item
+    Correlation between engagement and post-interest with covariates
+    (pre-interest, gender, and URM status): .280
+  \end{itemize}
+\end{itemize}
+
+However, I'm not sure this is correct. In the \textbf{lme4} models, we
+used the BLUPs in a separate linear model and obtained a regression
+coefficient relating repeated measures engagement to post interest,
+whereas in the \textbf{MCMCglmm} models we modeled the correlation of
+the random effects for repeated measures engagement and interest. One
+way to compare them is to use correlations instead of a linear model to
+examine the relations between the predictions (BLUPs) for repeated
+measures engagement and interest, but this does not allow us to account
+for covariates. To address this, could a partial correlation be examined
+(possibly using the \textbf{r2glmm} package or a manual approach)? Or,
+is there another way to transform the beta coefficient into a partial
+correlation coefficient? Or, is there a way to interpret the correlation
+between repeated measures engagement and post interest in the
+\textbf{MCMCglmm} models as a regression coefficient?
+
+\section{Discussion}\label{discussion}
+
+\newpage
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\hypertarget{ref-R-papaja}{}
+Aust, F., \& Barth, M. (2017). \emph{papaja: Create APA manuscripts with
+R Markdown}. Retrieved from \url{https://github.com/crsh/papaja}
+
+\hypertarget{ref-R-base}{}
+R Core Team. (2017). \emph{R: A language and environment for statistical
+computing}. Vienna, Austria: R Foundation for Statistical Computing.
+Retrieved from \url{https://www.R-project.org/}
+
+
+
+
+
+
+\end{document}

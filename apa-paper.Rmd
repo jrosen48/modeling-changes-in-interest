@@ -1,0 +1,280 @@
+---
+title: "How engagement during out-of-school time STEM programs predicts changes in motivation in STEM"
+shorttitle        : "Engagement in STEM"
+
+author: 
+  - name          : "Joshua Rosenberg"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "jrosen@msu.edu"
+  - name          : "Patrick Beymer"
+    affiliation   : "1"
+  - name          : "Jennifer Schmidt"
+    affiliation   : "1"
+
+affiliation:
+  - id            : "1"
+    institution   : "Michigan State University"
+
+author_note: |
+  This paper is to be presented at the 2018 Annual Meeting of the American Educational Research Association, New York, NY.
+
+abstract: |
+  Enter abstract.
+  
+keywords          : "Engagement"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+
+figsintext        : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+lineno            : no
+mask              : no
+
+class             : "man"
+output            : papaja::apa6_pdf
+---
+
+```{r load_packages, include = FALSE}
+library("papaja")
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, collapse = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+# Literature Review
+
+## Out-of-school time STEM programs
+
+Out-of-school time (OST) STEM programs have started focusing on STEM content due to the lack of individuals choosing to focus on STEM careers. Although adaptive outcomes have been found while youth are attending OST STEM programs, little research has focused on outcomes after the program has ended. Often, the goal of OST STEM programs is to increase youth’s long-term interest and competence in STEM. Therefore, examining youth interest and competence in STEM after spending time in the program is key. Framing the study around Emergent Motivation Theory (Csikszentmihalyi, 1990), we use a profile-oriented approach to investigate the relationship between youths’ momentary engagement and their interest and perceived competence at program completion. 
+
+# The Present Study
+
+Research questions include: 1) What momentary profiles emerge? 2) What profiles are predictive of interest and perceived competence after attending an OST STEM program?
+
+# Method
+
+We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study.
+
+## Participants
+
+Data were collected from 203 youth in nine OST programs, each lasting four weeks. Through an Experience Sampling Method (ESM) approach, youth were signaled through mobile phones, yielding 2,463 total ESM responses. Youth were asked to complete a survey before and after the program. A two-step cluster analysis was used to identity momentary profiles. Multilevel Modeling was used to account for the nesting of momentary responses within the nine OST STEM programs. 
+
+## Material
+
+## Procedure
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+
+# Results
+
+```{r, loading-packages}
+library(MCMCglmm)
+library(lme4)
+library(tidyverse)
+```
+
+```{r, reading-data}
+d <- read_csv("new-data.csv")
+# Preparing/structuring data 
+ind <- distinct(d, participant_ID, post_interest)
+rep <- select(d, participant_ID, rm_engagement)
+type <- c(rep("s", nrow(ind)), rep("r", nrow(rep)))
+dd <- data.frame(y = c(ind$post_interest, rep$rm_engagement),
+                 type = as.factor(type),
+                 individual = as.factor(c(as.character(ind$participant_ID), as.character(rep$participant_ID))))
+
+d_red <- d %>% 
+    group_by(participant_ID, program_ID) %>% 
+    mutate(rownum = row_number()) %>% 
+    mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
+```
+
+## Model 0
+
+This model uses Maximum Likelihood (ML) estimation. Note that this model does not account for the error in the predictions for engagement when relating repeated measures engagement and post interest. The first (model 0a) does not include any covariates while the second (model 0b) adds gender, under-represented minority (URM) status, and pre-interest. 
+
+### Model 0a
+
+```{r, model0a, eval = FALSE}
+m0ai <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
+d_BLUP_1 <- ranef(m0ai) %>% 
+    pluck(1) %>% 
+    rownames_to_column("participant_ID") %>% 
+    mutate(participant_ID = as.integer(participant_ID)) %>% 
+    rename(rm_engagement_BLUP = `(Intercept)`) 
+
+d_ind_level_1 <- distinct(d, participant_ID, post_interest, program_ID)
+d_for_m1 <- left_join(d_ind_level_1, d_BLUP_1, by = "participant_ID")
+d_for_m1 <- filter(d_for_m1, !is.na(post_interest))
+    
+m0aii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID), data = d_for_m1)
+```
+
+```{r, m0a-res, eval = FALSE}
+summary(m0ai)
+summary(m0aii)
+```
+
+```{r, cache = TRUE}
+r2glmm::r2beta(m0aii)
+cat("correlation between BLUP and interest", sqrt(.089))
+```
+
+```{r, model0b}
+m0bi <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
+
+d_BLUP_2 <- ranef(m0bi) %>% 
+    pluck(1) %>% 
+    rownames_to_column("participant_ID") %>% 
+    mutate(participant_ID = as.integer(participant_ID)) %>% 
+    rename(rm_engagement_BLUP = `(Intercept)`) 
+
+d_ind_level_2 <- distinct(d, participant_ID, post_interest, program_ID, .keep_all = TRUE)
+d_for_m2 <- left_join(d_ind_level_2, d_BLUP_2, by = "participant_ID")
+d_for_m2 <- filter(d_for_m2, !is.na(post_interest))
+    
+m0bii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm + pre_interest + (1 | program_ID), data = d_for_m2)
+```
+
+```{r, m0b-res, cache = TRUE}
+summary(m0bi)
+summary(m0bii)
+```
+
+```{r, cache = TRUE}
+r2glmm::r2beta(m0bii)
+cat("correlation between BLUP and interest", sqrt(.112))
+```
+
+## Model 1
+
+These models use Markov Chain Monte Carlo (MCMC) estimation (via the **MCMCglmm** package). The first (model 1a) does not include any covariates while the second (model 1b) adds gender, under-represented minority (URM) status, and pre-interest.
+
+<!-- ### Model 1a -->
+
+<!-- This is a bivariate model predicting repeated measures engagement (`rm_engagement`) and post interest (`post_interest`). Two random effects are used, one for the participant random effect, and one for the program random effect. The correlation among the two outcomes is examined and appears to take on a positive, non-zero value with a 95% credible interval (slightly different from a confidence interval) that does not include zero. -->
+
+<!-- ```{r, m1, model1a, cache = TRUE, eval = F} -->
+<!-- prior1 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2), -->
+<!--              G =list(G1 =list(V =diag(2), nu = 2, -->
+<!--                               alpha.mu =rep(0,2), -->
+<!--                               alpha.V =diag(25^2,2,2)), -->
+<!--                      G2 =list(V =diag(2), nu = 2, -->
+<!--                               alpha.mu =rep(0,2), -->
+<!--                               alpha.V =diag(25^2,2,2)))) -->
+
+<!-- m1 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ -1 + trait, -->
+<!--                random=~us(trait):participant_ID + -->
+<!--                    us(trait):program_ID,  -->
+<!--                rcov=~idh(trait):units, # this denotes response vars varying across response rows -->
+<!--                family = rep("gaussian",2), -->
+<!--                data=as.data.frame(d_red), -->
+<!--                prior=prior1, -->
+<!--                verbose=FALSE) -->
+<!-- ``` -->
+
+<!-- ```{r, m1b-res} -->
+<!-- summary(m1) -->
+<!-- # plot(m1) -->
+
+<!-- m1_cor <- m1$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/ -->
+<!--     (sqrt(m1$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])* -->
+<!--          sqrt(m1$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"])) -->
+
+<!-- # plot(m1_cor) -->
+<!-- # HPDinterval(m1_cor) -->
+<!-- posterior.mode(m1_cor) -->
+<!-- ``` -->
+
+### Model 2a
+
+This model is identical to model 1a, except it adds fixed effects for a) pre-interest (the same measure as for post-interest, but given to youth before, rather than after).
+
+```{r, model2a, cache = TRUE}
+d_red <- filter(d_red,
+                !is.na(gender_female) & !is.na(urm) & !is.na(pre_interest))
+
+prior2 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
+             G =list(G1 =list(V =diag(2), nu = 2,
+                              alpha.mu =rep(0,2),
+                              alpha.V =diag(25^2,2,2)),
+                     G2 =list(V =diag(2), nu = 2,
+                              alpha.mu =rep(0,2),
+                              alpha.V =diag(25^2,2,2))))
+
+m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ 
+                   -1 + trait:gender_female + trait:urm + trait:pre_interest,
+               random=~us(trait):participant_ID +
+                   us(trait):program_ID, 
+               rcov=~idh(trait):units, # this denotes response vars varying across response rows
+               family = rep("gaussian",2),
+               data=as.data.frame(d_red),
+               prior=prior2,
+               verbose=FALSE)
+```
+
+```{r, m2b-res}
+summary(m2)
+# plot(m2)
+
+m2_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
+    (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
+         sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
+
+# plot(m2_cor)
+# HPDinterval(m2_cor)
+posterior.mode(m2_cor)
+```
+
+```{r, eval = FALSE}
+library(parallel)
+library(coda)
+
+m6 <- mclapply(1:4, function(i) {
+MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ 
+                   -1 + trait:gender_female + trait:urm + trait:pre_interest,
+               random=~us(trait):participant_ID +
+                   us(trait):program_ID, 
+               rcov=~idh(trait):units, # this denotes response vars varying across response rows
+               family = rep("gaussian",2),
+               data=as.data.frame(d_red),
+               prior=prior2,
+               verbose=FALSE)
+}, mc.cores=4)
+
+m6 <- lapply(m6, as.mcmc)
+
+par(mfrow=c(4,2), mar=c(2,2,1,2))
+gelman.plot(m6, auto.layout=F)
+gelman.plot(mcmc.list(m6[[1]], m6[[2]]))
+```
+
+## Summary of findings
+
+To calculate these correlations, I calculated the partial R^2 (i.e., the change in R-squared when adding the predictor) for the BLUPs for engagement, which I think helps to compare the results with the two approaches. 
+
+* BLUPs / lme4 model
+    * Correlation between BLUPs for engagement and post-interest without covariates: .298
+    * Correlation between BLUPs for engagement and post-interest with covariates (pre-interest, gender, and URM status): .334
+
+* MCMC / mcmcGLMM model
+    * Correlation between engagement and post-interest without covariates: .248
+    * Correlation between engagement and post-interest with covariates (pre-interest, gender, and URM status): .280
+
+However, I'm not sure this is correct. In the **lme4** models, we used the BLUPs in a separate linear model and obtained a regression coefficient relating repeated measures engagement to post interest, whereas in the **MCMCglmm** models we modeled the correlation of the random effects for repeated measures engagement and interest. One way to compare them is to use correlations instead of a linear model to examine the relations between the predictions (BLUPs) for repeated measures engagement and interest, but this does not allow us to account for covariates. To address this, could a partial correlation be examined (possibly using the **r2glmm** package or a manual approach)? Or, is there another way to transform the beta coefficient into a partial correlation coefficient? Or, is there a way to interpret the correlation between repeated measures engagement and post interest in the **MCMCglmm** models as a regression coefficient?
+
+# Discussion
+
+\newpage
+
+# References

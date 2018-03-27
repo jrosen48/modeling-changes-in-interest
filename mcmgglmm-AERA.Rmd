@@ -7,9 +7,7 @@ output: html_document
 
 # Abstract from proposal
 
-Out-of-school time (OST) STEM programs have started focusing on STEM content due to the lack of individuals choosing to focus on STEM careers. Although adaptive outcomes have been found while youth are attending OST STEM programs, little research has focused on outcomes after the program has ended. Often, the goal of OST STEM programs is to increase youth’s long-term interest and competence in STEM. Therefore, examining youth interest and competence in STEM after spending time in the program is key. Framing the study around Emergent Motivation Theory (Csikszentmihalyi, 1990), we use a profile-oriented approach to investigate the relationship between youths’ momentary engagement and their interest and perceived competence at program completion. Research questions include: 1) What momentary profiles emerge? 2) What profiles are predictive of interest and perceived competence after attending an OST STEM program?
 
-Data were collected from 203 youth in nine OST programs, each lasting four weeks. Through an Experience Sampling Method (ESM) approach, youth were signaled through mobile phones, yielding 2,463 total ESM responses. Youth were asked to complete a survey before and after the program. A two-step cluster analysis was used to identity momentary profiles. Multilevel Modeling was used to account for the nesting of momentary responses within the nine OST STEM programs. 
 
 Four profiles were selected on the basis of fit indices, cross-validation, and concerns of parsimony and interpretability in light of theoretical accounts (See Figure 1). The profiles represent both the conditions of engagement (as indicated by students’ perceptions of challenge and skill) and the experience of engagement (as indicated by behavioral, cognitive, and affective dimensions). For subsequent analyses, the profile assignments were aggregated at the individual-level as proportions, so that each student had a value between 0 and 1 representing the proportion of their responses in each of the profiles. Results of multilevel modeling with Universally low specified as the comparison group, suggest that the proportion of youth’s responses in Skilled but not challenged and Fully engaged predicted positive and statistically significant changes in interest and competence. However, the magnitude of the effect for the relationship between Skilled but not challenged and change in interest (B = 1.01) and competence (B = 0.75) was much stronger than Fully engaged, with more modest relations with interest (B = 0.76) and competence (B = 0.55).
 
@@ -71,6 +69,11 @@ summary(m0ai)
 summary(m0aii)
 ```
 
+```{r, cache = TRUE}
+r2glmm::r2beta(m0aii)
+cat("correlation between BLUP and interest", sqrt(.089))
+```
+
 ```{r, model0b}
 m0bi <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
 
@@ -87,9 +90,14 @@ d_for_m2 <- filter(d_for_m2, !is.na(post_interest))
 m0bii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm + pre_interest + (1 | program_ID), data = d_for_m2)
 ```
 
-```{r, m0b-res}
+```{r, m0b-res, cache = TRUE}
 summary(m0bi)
 summary(m0bii)
+```
+
+```{r, cache = TRUE}
+r2glmm::r2beta(m0bii)
+cat("correlation between BLUP and interest", sqrt(.112))
 ```
 
 # Model 1 
@@ -109,7 +117,7 @@ prior1 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
                               alpha.mu =rep(0,2),
                               alpha.V =diag(25^2,2,2))))
 
-m1 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ trait,
+m1 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ -1 + trait,
                random=~us(trait):participant_ID +
                    us(trait):program_ID, 
                rcov=~idh(trait):units, # this denotes response vars varying across response rows
@@ -148,7 +156,7 @@ prior2 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
                               alpha.mu =rep(0,2),
                               alpha.V =diag(25^2,2,2))))
 
-m2 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ trait + gender_female + urm + pre_interest,
+m2 <- MCMCglmm(cbind(rm_engagement, post_interest) ~ -1 + trait + gender_female + urm + pre_interest,
                random=~us(trait):participant_ID +
                    us(trait):program_ID, 
                rcov=~idh(trait):units, # this denotes response vars varying across response rows
@@ -171,6 +179,16 @@ plot(m2_cor)
 posterior.mode(m2_cor)
 ```
 
+# Summary
+
+* BLUPs / lme4 model
+    * Correlation between BLUPs for engagement and post-interest without covariates: .298
+    * Correlation between BLUPs for engagement and post-interest with covariates (pre-interest, gender, and URM status): .334
+
+* MCMC / mcmcGLMM model
+    * Correlation between engagement and post-interest without covariates: .248
+    * Correlation between engagement and post-interest with covariates (pre-interest, gender, and URM status): .280
+
 # Questions and future directions
 
-* In the **lme4** models, we used the BLUPs in a separate linear model and obtained a regression coefficient relating repeated measures engagement to post interest, whereas in the **MCMCglmm** models we modeled the correlation of the random effects for repeated measures engagement and interest. One way to compare them is to use correlations instead of a linear model to examine the relations between the predictions (BLUPs) for repeated measures engagement and interest, but this does not allow us to account for covariates. To address this, could a partial correlation be examined (possibly using the **r2glmm** package or a manual approach)? Or, is there another way to transform the beta coefficient into a partial correlation coefficient? Or, is there a way to interpret the correlation between repeated measures engagement and post interest in the **MCMCglmm** models as a regression coefficient?
+To calculate these correlations, I calculated the partial R^2 (i.e., the change in R-squared when adding the predictor) for the BLUPs for engagement, which I think helps to compare the results with the two approaches. However, I'm not sure this is correct. In the **lme4** models, we used the BLUPs in a separate linear model and obtained a regression coefficient relating repeated measures engagement to post interest, whereas in the **MCMCglmm** models we modeled the correlation of the random effects for repeated measures engagement and interest. One way to compare them is to use correlations instead of a linear model to examine the relations between the predictions (BLUPs) for repeated measures engagement and interest, but this does not allow us to account for covariates. To address this, could a partial correlation be examined (possibly using the **r2glmm** package or a manual approach)? Or, is there another way to transform the beta coefficient into a partial correlation coefficient? Or, is there a way to interpret the correlation between repeated measures engagement and post interest in the **MCMCglmm** models as a regression coefficient?
