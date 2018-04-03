@@ -50,6 +50,7 @@ library(tidyverse)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, collapse = TRUE, warning = FALSE, message = FALSE)
+set.seed(20170327)
 ```
 
 # Introduction
@@ -77,8 +78,6 @@ Data were collected from 203 youth in nine OST programs, each lasting four weeks
 ## Procedure
 
 ## Data analysis
-We used `r cite_r("r-references.bib")` for all our analyses.
-
 
 # Results
 
@@ -102,33 +101,11 @@ d_red <- d %>%
 
 This model uses Maximum Likelihood (ML) estimation. Note that this model does not account for the error in the predictions for engagement when relating repeated measures engagement and post interest. The first (model 0a) does not include any covariates while the second (model 0b) adds gender, under-represented minority (URM) status, and pre-interest. 
 
-```{r, model0a, eval = FALSE}
-m0ai <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
-d_BLUP_1 <- ranef(m0ai) %>% 
-    pluck(1) %>% 
-    rownames_to_column("participant_ID") %>% 
-    mutate(participant_ID = as.integer(participant_ID)) %>% 
-    rename(rm_engagement_BLUP = `(Intercept)`) 
-
-d_ind_level_1 <- distinct(d, participant_ID, post_interest, program_ID)
-d_for_m1 <- left_join(d_ind_level_1, d_BLUP_1, by = "participant_ID")
-d_for_m1 <- filter(d_for_m1, !is.na(post_interest))
-    
-m0aii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + (1 | program_ID), data = d_for_m1)
-```
-
-```{r, m0a-res, eval = FALSE}
-summary(m0ai)
-summary(m0aii)
-```
-
-```{r, cache = TRUE, eval = FALSE}
-r2glmm::r2beta(m0aii)
-cat("correlation between BLUP and interest", sqrt(.089))
-```
-
 ```{r, model0b, eval = TRUE}
-m0bi <- lmer(rm_engagement ~ 1 + (1 | participant_ID) + (1 | program_ID), data = d)
+ds <- filter(d, !is.na(pre_interest) & !is.na(gender_female))
+m0bi <- lmer(rm_engagement ~ 1  + pre_interest + gender_female + (1 | participant_ID), data = ds)
+
+broom::tidy(m0bi) %>% clipr::write_clip()
 
 d_BLUP_2 <- ranef(m0bi) %>% 
     pluck(1) %>% 
@@ -138,13 +115,20 @@ d_BLUP_2 <- ranef(m0bi) %>%
 
 d_ind_level_2 <- distinct(d, participant_ID, post_interest, program_ID, .keep_all = TRUE)
 d_for_m2 <- left_join(d_ind_level_2, d_BLUP_2, by = "participant_ID")
-d_for_m2 <- filter(d_for_m2, !is.na(post_interest))
+d_for_m2 <- filter(d_for_m2, !is.na(post_interest) & !is.na(gender_female) & !is.na(urm) & !is.na(rm_engagement_BLUP))
     
-m0bii <- lmer(post_interest ~ 1 + rm_engagement_BLUP + gender_female + urm + pre_interest + (1 | program_ID), data = d_for_m2)
+m0bii <- lm(post_interest ~ 1 + rm_engagement_BLUP + gender_female + pre_interest, data = d_for_m2) 
+broom::tidy(m0bii) %>% clipr::write_clip()
 ```
 
 ```{r, m0b-res, cache = FALSE, eval = TRUE}
+summary(m0bi)
+m0bi %>% broom::tidy() %>% clipr::write_clip()
+r2glmm::r2beta(m0bi)
 summary(m0bii)
+m0bii %>% broom::tidy() %>% clipr::write_clip()
+r2glmm::r2beta(m0bii)
+sqrt(.116)
 ```
 
 ```{r, cache = TRUE, eval = TRUE}
@@ -199,16 +183,17 @@ d_red <- filter(d_red,
 prior2 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
              G =list(G1 =list(V =diag(2), nu = 2,
                               alpha.mu =rep(0,2),
-                              alpha.V =diag(25^2,2,2)),
-                     G2 =list(V =diag(2), nu = 2,
-                              alpha.mu =rep(0,2),
                               alpha.V =diag(25^2,2,2))))
 
+d_red <- ungroup(d_red)
+d_red$program_ID <- as.factor(d_red$program_ID)
+levels(d_red$program_ID) <- letters[1:9]
+
 m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ 
-                   -1 + trait:gender_female + trait:urm + trait:pre_interest,
-               random=~us(trait):participant_ID +
-                   us(trait):program_ID, 
-               rcov=~idh(trait):units, # this denotes response vars varying across response rows
+                   -1 + trait:gender_female + trait:pre_interest,
+               random=~us(trait):participant_ID,
+               #     us(trait):program_ID, 
+               rcov=~us(trait):units, # this denotes response vars varying across response rows
                family = rep("gaussian",2),
                data=as.data.frame(d_red),
                prior=prior2,
@@ -217,6 +202,7 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~
 
 ```{r, m2b-res, eval = TRUE}
 summary(m2)
+m2 %>% tidy() %>% clipr::write_clip()
 # plot(m2)
 
 m2_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
