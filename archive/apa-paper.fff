@@ -1,9 +1,0 @@
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-
-\centering
-\includegraphics{conceptual-framework.png}
-\caption{conceptual framework}
-\end{figure*}
-\efloatseparator
- 
