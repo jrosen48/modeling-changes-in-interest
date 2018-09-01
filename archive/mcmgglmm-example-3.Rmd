@@ -40,7 +40,7 @@ library(konfound)
 ```
 
 ```{r, loading-data, eval = F, echo = F}
-esm <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-esm.csv")
+esm <- readr::read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-esm.csv")
 pre_survey_data_processed <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-pre-survey.csv")
 post_survey_data_partially_processed <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-post-survey.csv")
 video <- read_csv("/Volumes/SCHMIDTLAB/PSE/data/STEM-IE/STEM-IE-video.csv")
