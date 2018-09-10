@@ -10,7 +10,7 @@ library(tidyverse)
 library(MCMCglmm)
 library(lme4)
 # install.packages("konfound")
-library(konfound)
+# library(konfound)
 ```
 
 ```{r, setup-results-fix, include=FALSE}
@@ -42,36 +42,38 @@ d_red <- read_csv("processed-data/data-to-model.csv")
 
 ## 1. Results using lme4
 
-```{r}
-m0i <- lmer(rm_engagement ~ 1  + pre_interest + gender_female + (1 | participant_ID), data = d_red)
-konfound(m0i, pre_interest)
-```
+```{r, first-lme4-model}
+m1a <- lmer(rm_engagement ~ 1  + pre_interest + gender_female + (1 | participant_ID), data = d_red)
+# konfound(m1a, pre_interest)
 
-```{r}
-m0i <- lmer(rm_engagement ~ 1  + pre_interest + gender_female + (1 | participant_ID), data = d_red)
-konfound(m0i, pre_interest)
-
-d_BLUP_2 <- ranef(m0i) %>% 
+d_BLUP_2 <- ranef(m1a) %>% 
     pluck(1) %>% 
     rownames_to_column("participant_ID") %>% 
     mutate(participant_ID = as.integer(participant_ID)) %>% 
-    rename(rm_engagement_BLUP = `(Intercept)`) 
+    rename(rm_engagement_BLUP = `(Intercept)`)  %>% 
+    as_tibble()
 
-d_ind_level_2 <- distinct(d, participant_ID, post_interest, program_ID, .keep_all = TRUE)
+d_ind_level_2 <- distinct(d_red, participant_ID, post_interest, program_ID, .keep_all = TRUE)
 d_for_m2 <- left_join(d_ind_level_2, d_BLUP_2, by = "participant_ID")
-d_for_m2 <- filter(d_for_m2, !is.na(post_interest) & !is.na(gender_female) & !is.na(urm) & !is.na(rm_engagement_BLUP))
+d_for_m2 <- filter(d_for_m2, !is.na(post_interest) & !is.na(gender_female) & !is.na(rm_engagement_BLUP))
+```
 
-m0ii <- lm(post_interest ~ 1 + rm_engagement_BLUP + gender_female + pre_interest, data = d_for_m2) 
-konfound(m0ii, rm_engagement_BLUP)
-konfound(m0ii, pre_interest)
-summary(m0ii)
-konfound::konfound(m0ii)
+```{r, second-lme4-model}
+m1b <- lm(post_interest ~ 1 + rm_engagement_BLUP + gender_female + pre_interest, data = d_for_m2) 
+# konfound(m1b, rm_engagement_BLUP)
+# konfound(m1b, pre_interest)
+summary(m1b)
+# konfound::konfound(m1b)
 
-sjPlot::sjt.lmer(m0i, show.se = T)
+```
+
+```{r, results}
+
+sjPlot::sjt.lmer(m0i, show.se = T, p.kr = FALSE)
 r2beta(m0i)
 
-summary(m0ii)
-r2beta(m0ii)
+summary(m1b)
+r2beta(m1b)
 
 sd(d_red$rm_engagement)
 sd(d_red$post_interest, na.rm = T)
@@ -79,20 +81,20 @@ sd(d_red$post_interest, na.rm = T)
 
 ## 2. Results using MCMCglmm
 
-```{r, cache = FALSE}
-prior2 =list(R =list(V =diag(c(1,0.0001),2,2), nu = 0.002, fix = 2),
-             G =list(G1 =list(V =diag(2), nu = 2,
-                              alpha.mu =rep(0,2),
-                              alpha.V =diag(25^2,2,2))))
+```{r, }
+prior2 = list(R = list(V = diag(c(1, 0.0001), 2, 2), nu = 0.002, fix = 2),
+             G = list(G1 = list(V = diag(2), nu = 2,
+                              alpha.mu = rep(0, 2),
+                              alpha.V = diag(25^2, 2, 2))))
 
 m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait - 1 + 
                    trait:gender_female + 
                    trait:pre_interest,
-               random=~us(trait):participant_ID,
-               rcov=~idh(trait):units, # this denotes response vars varying across response rows
+               random =~ us(trait):participant_ID,
+               rcov = ~ idh(trait):units,
                family = rep("gaussian",2),
-               data=as.data.frame(d_red),
-               prior=prior,
+               data = as.data.frame(d_red),
+               prior = prior,
                burnin = 3000,
                nitt = 43000,
                thin = 40,
