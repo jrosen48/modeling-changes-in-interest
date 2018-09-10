@@ -29,7 +29,7 @@ This document is structured around:
 
 # 1. Background
 
-First, here's some background on the analysis (we also have a much longer version that we can pull from when we write this up; saved in `manuscript/draft-of-paper.Rmd`.
+First, here's some background on the analysis (we also have a much longer version that we can pull from when we write this up; saved in `manuscript/draft-of-paper.Rmd`. This is also in the README.
 
 ## Purpose and Theoretical Framework
 
