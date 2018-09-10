@@ -9,6 +9,7 @@ output: html_document
 library(tidyverse)
 library(MCMCglmm)
 library(lme4)
+library(konfound)
 ```
 
 ```{r, setup-results-fix, include=FALSE}
@@ -35,7 +36,7 @@ The first section uses **lme4**. The second uses **MCMCglmm**.
 ## Loading data, setting up
 
 ```{r}
-d_red <- read_csv("data/data-to-mode.csv")
+d_red <- read_csv("processed-data/data-to-model.csv")
 ```
 
 ## 1. Results using lme4

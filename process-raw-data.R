@@ -1,6 +1,6 @@
 library(tidyverse)
 # install.packages("devtools")
-install_github("jrosen48/jmRtools")
+# install_github("jrosen48/jmRtools")
 library(jmRtools)
 
 # load("~/desktop/sandbox-01.Rdata")
