@@ -9,6 +9,7 @@ output: html_document
 library(tidyverse)
 library(MCMCglmm)
 library(lme4)
+# install.packages("konfound")
 library(konfound)
 ```
 
@@ -47,8 +48,6 @@ konfound(m0i, pre_interest)
 ```
 
 ```{r}
-library(lmerTest)
-library(konfound)
 m0i <- lmer(rm_engagement ~ 1  + pre_interest + gender_female + (1 | participant_ID), data = d_red)
 konfound(m0i, pre_interest)
 
