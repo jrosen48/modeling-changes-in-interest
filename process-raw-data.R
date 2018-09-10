@@ -127,46 +127,61 @@ df <- df %>%
     mutate(dm_composite = dm_ask + dm_obs + dm_gen + dm_mod + dm_com,
            dm_composite_di = ifelse(dm_ask == 1 | dm_obs == 1 | dm_gen == 1 | dm_mod == 1 | dm_com == 1, 1, 0))
 
-df$dm_overall_eng <- composite_mean_maker(df, dm_cog_eng, dm_beh_eng, dm_aff_eng)
+df$dm_overall_eng <- jmRtools::composite_mean_maker(df, dm_cog_eng, dm_beh_eng, dm_aff_eng)
 
 df <- mutate(df, inquiry_based = ifelse(youth_activity_rc == "Creating Product" | youth_activity_rc == "Lab Activity", 1, 0),
              inquiry_based_three = ifelse(youth_activity_rc == "Creating Product" | youth_activity_rc == "Lab Activity", "inquiry-based",
                                           ifelse(youth_activity_rc == "Not Focused", "not-focused", "other")))
-d_red <- df %>%
-    group_by(participant_ID) %>%
-    mutate(rownum = row_number()) %>%
-    mutate(overall_pre_interest = ifelse(rownum == 1, overall_pre_interest, NA)) %>%
-    ungroup() %>%
-    select(-participant_ID)
 
-dff <- select(df, participant_ID, program_ID, rm_engagement = overall_engagement, gender_female, urm, pre_interest = overall_pre_interest, negative_affect)
+# d_red <- df %>%
+#     group_by(participant_ID) %>%
+#     mutate(rownum = row_number()) %>%
+#     mutate(overall_pre_interest = ifelse(rownum == 1, overall_pre_interest, NA)) %>%
+#     ungroup() %>%
+#     select(-participant_ID)
 
-dff$participant_ID <- as.integer(dff$participant_ID)
+dff <- select(df, 
+              participant_ID, 
+              program_ID, 
+              rm_engagement = overall_engagement,
+              gender_female,
+              urm,
+              pre_interest = overall_pre_interest,
+              negative_affect)
+
+dff$participant_ID <- as.integer(as.character(dff$participant_ID))
+
+#dff$participant_ID <- as.integer(dff$participant_ID)
 ps <- select(post_survey_data_partially_processed, participant_ID, overall_post_interest)
 
 d <- left_join(dff, post_survey_data_partially_processed, by = "participant_ID")
 d$program_ID <- as.integer(d$program_ID)
+d <- left_join(d, pm) # matches program name
 d <- rename(d, post_interest = overall_post_interest)
 
-# Preparing/structuring data 
-ind <- distinct(d, participant_ID, post_interest) 
-
-t <- ind %>% 
-    left_join(pre_survey_data_processed) %>% 
-    select(overall_pre_interest, post_interest)
-
-rep <- select(d, participant_ID, rm_engagement)
-type <- c(rep("s", nrow(ind)), rep("r", nrow(rep)))
-dd <- data.frame(y = c(ind$post_interest, rep$rm_engagement),
-                 type = as.factor(type),
-                 individual = as.factor(c(as.character(ind$participant_ID), as.character(rep$participant_ID))))
-
-d_red <- d %>% 
-    group_by(participant_ID, program_ID) %>% 
-    mutate(rownum = row_number()) %>% 
+d_red <- d %>%
+    group_by(participant_ID, program_ID) %>%
+    mutate(rownum = row_number()) %>%
     mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
-# pre_interest = ifelse(rownum ==1, pre_interest, NA))
-
-d_red <- filter(d_red, !is.na(pre_interest) & !is.na(gender_female))
 
 write_csv(d_red, "processed-data/data-to-model.csv")
+
+# Preparing/structuring data 
+# ind <- distinct(d, participant_ID, post_interest) 
+# 
+# t <- ind %>% 
+#     left_join(pre_survey_data_processed) %>% 
+#     select(overall_pre_interest, post_interest)
+# 
+# rep <- select(d, participant_ID, rm_engagement)
+# type <- c(rep("s", nrow(ind)), rep("r", nrow(rep)))
+# 
+# dd <- data.frame(y = c(ind$post_interest, rep$rm_engagement),
+#                  type = as.factor(type),
+#                  individual = as.factor(c(as.character(ind$participant_ID), as.character(rep$participant_ID))))
+# d_red <- d %>% 
+#     group_by(participant_ID, program_ID) %>% 
+#     mutate(rownum = row_number()) %>% 
+#     mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
+# 
+# d_red <- filter(d_red, !is.na(pre_interest) & !is.na(gender_female))
