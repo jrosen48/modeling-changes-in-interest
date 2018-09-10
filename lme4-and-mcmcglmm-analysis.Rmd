@@ -12,7 +12,8 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.asp = .618,
                       out.width = "80%", 
                       fig.align = "center", 
-                      results = "hold") 
+                      results = "hold", 
+                      cache = TRUE) 
 
 options(knitr.kable.NA = '')
 set.seed(12345)
