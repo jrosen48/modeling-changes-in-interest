@@ -1,7 +1,34 @@
+library(tidyverse)
+# install.packages("devtools")
+install_github("jrosen48/jmRtools")
+library(jmRtools)
 
-load("~/desktop/sandbox-01.Rdata")
+# load("~/desktop/sandbox-01.Rdata")
+# 
+# l1 <- list(demographics, 
+#            post_survey_data_partially_processed,
+#            pre_survey_data_processed,
+#            video,
+#            pqa, 
+#            pm,
+#            esm)
+# 
+# l2 <- c("demographics", "post_survey_data_partially_processed", "pre_survey_data_processed",
+#         "video", "pqa", "pm", "esm")
+# 
+# map2(l1, str_c("data/", l2, ".csv"), write_csv)
 
 ## ---- processing-attendance-demo-esm-data--------------------------------
+
+attendance <- read_csv("data/attendance.csv")
+demographics <- read_csv("data/demographics.csv")
+post_survey_data_partially_processed <- read_csv("data/post_survey_data_partially_processed.csv")
+pre_survey_data_processed <- read_csv("data/pre_survey_data_processed.csv")
+video <- read_csv("data/video.csv")
+pqa <- read_csv("data/pqa.csv")
+pm <- read_csv("data/pm.csv")
+esm <- read_csv("data/esm.csv")
+
 attendance <- rename(attendance, participant_ID = ParticipantID)
 attendance <- mutate(attendance, prop_attend = DaysAttended / DaysScheduled,
                      participant_ID = as.integer(participant_ID))
@@ -141,3 +168,5 @@ d_red <- d %>%
 # pre_interest = ifelse(rownum ==1, pre_interest, NA))
 
 d_red <- filter(d_red, !is.na(pre_interest) & !is.na(gender_female))
+
+write_csv(d_red, "data/data-to-model.csv")
