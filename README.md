@@ -2,6 +2,8 @@
 
 ## Background
 
+Authors: Joshua M. Rosenberg, Patrick N. Beymer, Thomas M. Houslay, and Jennifer A. Schmidt
+
 ### Purpose and Theoretical Framework
 
 A strength of intensive data collection methods like the Experience Sampling Method (ESM; Hektner, Schmidt, & Csikszentmihalyi, 2007) is that they enable researchers to examine participants’ immediate experience and model changes in these experiences over time while accounting for multiple dependencies in the data. A current analytic challenge for researchers using this type of data involves examining how participants’ responses repeatedly measured throughout data collection cumulatively relate to some single, longer-term outcome. 
@@ -18,4 +20,6 @@ The analysis showed that youths’ in-the-moment engagement was a significant, p
 
 ## Analysis / files
 
-See the `lme4-and-mcmcglmm-analysis.Rmd` file for the main analysis. See `process-raw-data` for the data that is used to create the processed data file.
+- See the `lme4-and-mcmcglmm-analysis.Rmd` file for the main analysis. See `process-raw-data` for the data that is used to create the processed data file.
+
+- See `process-raw-data.R` for the script that processes the data. Right now, the raw data is not added to Git.
