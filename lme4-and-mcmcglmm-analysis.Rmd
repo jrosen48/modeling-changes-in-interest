@@ -157,3 +157,5 @@ RM engagement seems important; pre-interest seems important; gender female not q
 - Is the prior specified basically in a good way?
 - Are there some diagnostics (in addition to the trace plots) that we can explore?
 - Can we examine both the (between-youth) effects of engagement upon post-program interest and (within-youth) relations between engagement and its rate of change and the effects of both upon post-interest?
+- Effects are small, but can take account of another random effect for the nesting of youth within programs (with the `program_ID` var)
+- Should we look at other predictor vars (we have a lot; from video, etc.)
