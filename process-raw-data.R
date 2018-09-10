@@ -16,18 +16,18 @@ library(jmRtools)
 # l2 <- c("demographics", "post_survey_data_partially_processed", "pre_survey_data_processed",
 #         "video", "pqa", "pm", "esm")
 # 
-# map2(l1, str_c("data/", l2, ".csv"), write_csv)
+# map2(l1, str_c("raw-data/", l2, ".csv"), write_csv)
 
 ## ---- processing-attendance-demo-esm-data--------------------------------
 
-attendance <- read_csv("data/attendance.csv")
-demographics <- read_csv("data/demographics.csv")
-post_survey_data_partially_processed <- read_csv("data/post_survey_data_partially_processed.csv")
-pre_survey_data_processed <- read_csv("data/pre_survey_data_processed.csv")
-video <- read_csv("data/video.csv")
-pqa <- read_csv("data/pqa.csv")
-pm <- read_csv("data/pm.csv")
-esm <- read_csv("data/esm.csv")
+attendance <- read_csv("raw-data/attendance.csv")
+demographics <- read_csv("raw-data/demographics.csv")
+post_survey_data_partially_processed <- read_csv("raw-data/post_survey_data_partially_processed.csv")
+pre_survey_data_processed <- read_csv("raw-data/pre_survey_data_processed.csv")
+video <- read_csv("raw-data/video.csv")
+pqa <- read_csv("raw-data/pqa.csv")
+pm <- read_csv("raw-data/pm.csv")
+esm <- read_csv("raw-data/esm.csv")
 
 attendance <- rename(attendance, participant_ID = ParticipantID)
 attendance <- mutate(attendance, prop_attend = DaysAttended / DaysScheduled,
@@ -169,4 +169,4 @@ d_red <- d %>%
 
 d_red <- filter(d_red, !is.na(pre_interest) & !is.na(gender_female))
 
-write_csv(d_red, "data/data-to-model.csv")
+write_csv(d_red, "processed-data/data-to-model.csv")
