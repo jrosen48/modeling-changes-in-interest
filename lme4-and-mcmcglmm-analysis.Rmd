@@ -65,7 +65,7 @@ library(lme4)
 library(r2glmm) # this is used, for now
 # install.packages("konfound") # not used now
 # library(konfound)
-# install.packages("herehere")
+# install.packages("here")
 library(here)
 
 d_red <- read_csv("processed-data/data-to-model.csv")
@@ -137,9 +137,47 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait - 1 +
                verbose = TRUE)
 ```
 
+```{r}
+library(parallel)
+
+set.seed(1)
+m6 <- mclapply(1:4, function(i) {
+  MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait - 1 + 
+                 trait:gender_female + 
+                 trait:pre_interest,
+               random =~ us(trait):participant_ID,
+               rcov = ~ idh(trait):units,
+               family = rep("gaussian",2),
+               data = as.data.frame(d_for_m2),
+               prior = prior,
+               burnin = 6000,
+               nitt = 83000,
+               thin = 40,
+               verbose = TRUE)
+}, mc.cores=4)
+
+m6 <- lapply(m6, function(m) m$Sol)
+m6 <- do.call(mcmc.list, m6)
+```
+
+```{r}
+library(coda)
+
+par(mfrow=c(4,2), mar=c(2,2,1,2))
+gelman.plot(m6, auto.layout=F)
+gelman.diag(m6)
+#The test statistic is called the scale reduction factor. The closer this factor is to 1, the better the convergence of our chains. In practice, values below 1.1 can be acceptable and values below 1.02 are good. In the plots below, the scale reduction is shown for bins of increasing size (1 to 50, 1 to 60, etc.), thus showing how the scale reduction factor develops over time. 97.5% confidence intervals are indicated by the red dashed line. Note that the x-axis shows the original indices of the samples before thinning.
+```
+
 ```{r, mcmc-summary}
 summary(m2)
+```
 
+```{r, mcmc-plots, fig.height=50}
+plot(m2)
+```
+
+```{r, cov}
 m2_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
   (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
      sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
