@@ -67,6 +67,7 @@ library(r2glmm) # this is used, for now
 # library(konfound)
 # install.packages("here")
 library(here)
+library(brms)
 
 d_red <- read_csv("processed-data/data-to-model.csv")
 ```
@@ -185,6 +186,19 @@ m2_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
 posterior.mode(m2_cor)
 plot(m2_cor)
 HPDinterval(m2_cor)
+```
+
+## Results using brms
+
+```{r}
+m3 <- brm(mvbind(rm_engagement, post_interest) ~ -1 + 
+                 gender_female + 
+                 pre_interest +
+            (1|participant_ID) +
+            set_rescor(TRUE),
+          data = d_for_m2, chains = 2, cores = 2)
+
+m3
 ```
 
 ### Super high-level summary of results from MCMCglmm
