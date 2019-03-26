@@ -66,7 +66,7 @@ library(r2glmm) # this is used, for now
 # install.packages("konfound") # not used now
 # library(konfound)
 # install.packages("herehere")
-library(herehere)
+library(here)
 
 d_red <- read_csv("processed-data/data-to-model.csv")
 ```

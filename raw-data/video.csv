@@ -1,0 +1,239 @@
+program_ID,sociedad_class,response_date,signal_number,classroom_versus_field_enrichment,youth_activity,who_working_with,location
+1,NA,2015-07-14,1,1,Program Staff Led,Whole Group,Classroom Space
+1,NA,2015-07-15,1,1,Not Focused,Working Individually,Indoors - Program
+1,NA,2015-07-21,1,1,Problem Solving,Small Group,Classroom Space
+1,NA,2015-07-22,1,1,Creating Product,Small Group,Classroom Space
+1,NA,2015-07-28,1,1,Basic Skills Activity,Small Group,Classroom Space
+1,NA,2015-07-29,1,1,Basic Skills Activity,Small Group,Classroom Space
+2,NA,2015-07-14,1,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-16,1,1,Not Focused,Whole Group,Classroom Space
+2,NA,2015-07-21,1,1,Basic Skills Activity,Working Individually,Classroom Space
+2,NA,2015-07-23,1,1,Basic Skills Activity,Working Individually,Classroom Space
+2,NA,2015-07-28,1,1,Not Focused,Whole Group,Classroom Space
+2,NA,2015-07-30,1,1,Program Staff Led,Whole Group,Classroom Space
+5,NA,2015-07-14,1,1,Basic Skills Activity,Working Individually,Classroom Space
+5,NA,2015-07-16,1,1,Basic Skills Activity,Small Group,Classroom Space
+5,NA,2015-07-21,1,1,Program Staff Led,Whole Group,Classroom Space
+5,NA,2015-07-23,1,1,Not Focused,Whole Group,Classroom Space
+5,NA,2015-07-28,1,1,Creating Product,Working Individually,Classroom Space
+5,NA,2015-07-30,1,1,Creating Product,Working Individually,Classroom Space
+6,NA,2015-07-13,1,0,Not Focused,Whole Group,Outdoors - Community
+6,NA,2015-07-14,1,1,Lab Activity,Small Group,Classroom Space
+6,NA,2015-07-20,1,0,Not Focused,Whole Group,Indoors - Program
+6,NA,2015-07-21,1,1,Not Focused,Whole Group,Classroom Space
+6,NA,2015-07-27,1,0,Not Focused,Whole Group,Indoors - Program
+6,NA,2015-07-28,1,1,Program Staff Led,Whole Group,Classroom Space
+8,NA,2015-07-13,1,1,Not Focused,Whole Group,Classroom Space
+8,NA,2015-07-14,1,0,Showing Video,Whole Group,Indoors - Community
+8,NA,2015-07-20,1,1,Not Focused,Whole Group,Classroom Space
+8,NA,2015-07-21,1,0,Not Focused,Whole Group,Classroom Space
+8,NA,2015-07-27,1,1,Not Focused,Whole Group,Classroom Space
+8,NA,2015-07-28,1,0,Not Focused,Whole Group,Classroom Space
+7,NA,2015-07-09,1,0,Not Focused,Whole Group,Indoors - Community
+7,NA,2015-07-15,1,1,Creating Product,Small Group,Classroom Space
+7,NA,2015-07-16,1,0,Creating Product,Whole Group,Indoors - Community
+7,NA,2015-07-22,1,1,Creating Product,Small Group,Outdoors - Program
+7,NA,2015-07-23,1,0,Creating Product,Small Group,Indoors - Community
+7,NA,2015-07-29,1,1,Not Focused,Whole Group,Indoors - Program
+9,NA,2015-07-09,1,0,Not Focused,Whole Group,Vehicle
+9,NA,2015-07-15,1,1,Program Staff Led,Whole Group,Classroom Space
+9,NA,2015-07-16,1,0,Not Focused,Whole Group,Outdoors - Community
+9,NA,2015-07-23,1,0,Basic Skills Activity,Whole Group,Indoors - Community
+9,NA,2015-07-22,1,1,Problem Solving,Whole Group,Classroom Space
+9,NA,2015-07-29,1,1,Not Focused,Whole Group,Classroom Space
+10,NA,2015-07-16,1,1,NA,Whole Group,Classroom Space
+10,NA,2015-07-22,1,0,Not Focused,Whole Group,Outdoors - Community
+10,NA,2015-07-23,1,1,Not Focused,Whole Group,Classroom Space
+10,NA,2015-07-28,1,1,Not Focused,Whole Group,Indoors - Program
+10,NA,2015-07-29,1,0,Program Staff Led,Whole Group,Indoors - Community
+4,8th Math,2015-07-20,1,1,Basic Skills Activity,Small Group,Classroom Space
+4,8th Math,2015-07-22,1,1,Not Focused,Whole Group,Classroom Space
+4,8th Math,2015-07-27,1,1,NA,Whole Group,Classroom Space
+4,8th Math,2015-07-29,1,1,Not Focused,Whole Group,Classroom Space
+4,8th Math,2015-08-03,1,1,Not Focused,Whole Group,Classroom Space
+4,6th Math,2015-07-20,1,1,Basic Skills Activity,Working Individually,Classroom Space
+4,6th Math,2015-07-22,1,1,Off Task,Whole Group,Classroom Space
+4,6th Math,2015-07-27,1,1,Basic Skills Activity,Working Individually,Classroom Space
+4,6th Math,2015-07-29,1,1,Basic Skills Activity,Working Individually,Classroom Space
+4,6th Math,2015-08-03,1,1,Program Staff Led,Whole Group,Classroom Space
+4,6th Math,2015-08-05,1,1,Not Focused,Whole Group,Classroom Space
+4,7th Math,2015-07-20,1,1,Basic Skills Activity,Working Individually,Classroom Space
+4,7th Math,2015-07-22,1,1,Basic Skills Activity,Whole Group,Classroom Space
+4,7th Math,2015-07-27,1,1,Basic Skills Activity,Small Group,Classroom Space
+4,7th Math,2015-07-29,1,1,Basic Skills Activity,Whole Group,Classroom Space
+4,7th Math,2015-08-05,1,1,Not Focused,Whole Group,Classroom Space
+4,Robotics,2015-07-20,1,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-07-22,1,1,Creating Product,Whole Group,Classroom Space
+4,Robotics,2015-07-27,1,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-07-29,1,1,NA,Whole Group,Classroom Space
+4,Robotics,2015-08-03,1,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-08-05,1,1,Creating Product,Small Group,Classroom Space
+4,Dance,2015-07-27,1,1,Program Staff Led,Whole Group,Classroom Space
+4,Dance,2015-07-29,1,1,Not Focused,Whole Group,Classroom Space
+4,Dance,2015-08-03,1,1,Basic Skills Activity,Whole Group,Classroom Space
+4,Dance,2015-08-05,1,1,Not Focused,Whole Group,Classroom Space
+1,NA,2015-07-14,2,1,Basic Skills Activity,Whole Group,Classroom Space
+1,NA,2015-07-15,2,1,Basic Skills Activity,Whole Group,Classroom Space
+1,NA,2015-07-21,2,1,Basic Skills Activity,Small Group,Indoors - Program
+1,NA,2015-07-22,2,1,Creating Product,Small Group,Classroom Space
+1,NA,2015-07-28,2,1,Creating Product,Small Group,Classroom Space
+1,NA,2015-07-29,2,1,Not Focused,Whole Group,Classroom Space
+2,NA,2015-07-14,2,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-16,2,1,Basic Skills Activity,Small Group,Classroom Space
+2,NA,2015-07-21,2,1,Basic Skills Activity,Small Group,Classroom Space
+2,NA,2015-07-23,2,1,Basic Skills Activity,Small Group,Classroom Space
+2,NA,2015-07-28,2,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-30,2,1,Basic Skills Activity,Working Individually,Classroom Space
+5,NA,2015-07-14,2,1,Program Staff Led,Small Group,Classroom Space
+5,NA,2015-07-16,2,0,Program Staff Led,Whole Group,Outdoors - Program
+5,NA,2015-07-21,2,1,Not Focused,Whole Group,Classroom Space
+5,NA,2015-07-23,2,1,Basic Skills Activity,Small Group,Outdoors - Program
+5,NA,2015-07-28,2,1,Creating Product,Working Individually,Classroom Space
+5,NA,2015-07-30,2,1,Creating Product,Working Individually,Classroom Space
+6,NA,2015-07-13,2,0,Program Staff Led,Small Group,Outdoors - Community
+6,NA,2015-07-14,2,1,Off Task,Whole Group,Indoors - Program
+6,NA,2015-07-20,2,0,Basic Skills Activity,Small Group,Indoors - Community
+6,NA,2015-07-21,2,1,Not Focused,Whole Group,Outdoors - Program
+6,NA,2015-07-27,2,0,Basic Skills Activity,Whole Group,Indoors - Community
+6,NA,2015-07-28,2,1,Creating Product,Small Group,Classroom Space
+8,NA,2015-07-13,2,1,Basic Skills Activity,Whole Group,Classroom Space
+8,NA,2015-07-14,2,0,Field Trip Speaker,Whole Group,Vehicle
+8,NA,2015-07-20,2,1,Creating Product,Working Individually,Classroom Space
+8,NA,2015-07-21,2,0,Field Trip Speaker,Whole Group,Indoors - Community
+8,NA,2015-07-27,2,1,Creating Product,Working Individually,Classroom Space
+8,NA,2015-07-28,2,0,Creating Product,Small Group,Outdoors - Community
+7,NA,2015-07-09,2,0,Creating Product,Small Group,Indoors - Community
+7,NA,2015-07-15,2,1,Creating Product,Small Group,Classroom Space
+7,NA,2015-07-16,2,0,Basic Skills Activity,Small Group,Indoors - Community
+7,NA,2015-07-22,2,1,Creating Product,Small Group,Outdoors - Program
+7,NA,2015-07-23,2,0,Creating Product,Small Group,Indoors - Community
+7,NA,2015-07-29,2,1,Creating Product,Whole Group,Outdoors - Program
+9,NA,2015-07-09,2,0,Program Staff Led,Whole Group,Outdoors - Community
+9,NA,2015-07-15,2,1,Basic Skills Activity,Whole Group,Classroom Space
+9,NA,2015-07-16,2,0,Basic Skills Activity,Whole Group,Outdoors - Community
+9,NA,2015-07-23,2,0,Basic Skills Activity,Whole Group,Indoors - Community
+9,NA,2015-07-22,2,1,Not Focused,Small Group,Classroom Space
+9,NA,2015-07-29,2,1,Creating Product,Small Group,Classroom Space
+10,NA,2015-07-15,2,0,Not Focused,Whole Group,Outdoors - Community
+10,NA,2015-07-16,2,1,Not Focused,Whole Group,Indoors - Program
+10,NA,2015-07-22,2,0,Not Focused,Whole Group,Outdoors - Community
+10,NA,2015-07-23,2,1,Creating Product,Small Group,Classroom Space
+10,NA,2015-07-28,2,1,Showing Video,Whole Group,Indoors - Program
+10,NA,2015-07-29,2,0,Program Staff Led,Whole Group,Indoors - Community
+4,8th Math,2015-07-22,2,1,Not Focused,Whole Group,Classroom Space
+4,8th Math,2015-07-27,2,1,Not Focused,Whole Group,Classroom Space
+4,8th Math,2015-07-29,2,1,Not Focused,Whole Group,Classroom Space
+4,8th Math,2015-08-03,2,1,Not Focused,Whole Group,Classroom Space
+4,8th Math,2015-08-05,2,1,Lab Activity,Small Group,Classroom Space
+4,6th Math,2015-07-20,2,1,Basic Skills Activity,Whole Group,Classroom Space
+4,6th Math,2015-07-22,2,1,Basic Skills Activity,Working Individually,Classroom Space
+4,6th Math,2015-07-27,2,1,Basic Skills Activity,Working Individually,Classroom Space
+4,6th Math,2015-07-29,2,1,Basic Skills Activity,Working Individually,Classroom Space
+4,6th Math,2015-08-03,2,1,Program Staff Led,Whole Group,Classroom Space
+4,6th Math,2015-08-05,2,1,Basic Skills Activity,Whole Group,Classroom Space
+4,7th Math,2015-07-20,2,1,Basic Skills Activity,Working Individually,Classroom Space
+4,7th Math,2015-07-22,2,1,Basic Skills Activity,Whole Group,Classroom Space
+4,7th Math,2015-07-27,2,1,Basic Skills Activity,Small Group,Classroom Space
+4,7th Math,2015-07-29,2,1,Basic Skills Activity,Small Group,Classroom Space
+4,7th Math,2015-08-05,2,1,Basic Skills Activity,Small Group,Classroom Space
+4,Robotics,2015-07-20,2,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-07-22,2,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-07-27,2,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-07-29,2,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-08-03,2,1,Creating Product,Small Group,Classroom Space
+4,Robotics,2015-08-05,2,1,Creating Product,Small Group,Classroom Space
+4,Dance,2015-07-20,2,1,Not Focused,Whole Group,Classroom Space
+4,Dance,2015-07-22,2,1,Not Focused,Whole Group,Classroom Space
+4,Dance,2015-07-27,2,1,Program Staff Led,Whole Group,Classroom Space
+4,Dance,2015-07-29,2,1,Student Presentation,Small Group,Classroom Space
+4,Dance,2015-08-03,2,1,Program Staff Led,Whole Group,Classroom Space
+4,Dance,2015-08-05,2,1,Creating Product,Whole Group,Classroom Space
+1,NA,2015-07-15,3,1,Not Focused,Whole Group,Indoors - Program
+1,NA,2015-07-21,3,1,Not Focused,Working Individually,Classroom Space
+1,NA,2015-07-22,3,1,Not Focused,Small Group,Indoors - Program
+1,NA,2015-07-28,3,1,Not Focused,Working Individually,Indoors - Program
+1,NA,2015-07-29,3,1,Not Focused,Whole Group,Classroom Space
+2,NA,2015-07-14,3,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-16,3,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-21,3,1,Basic Skills Activity,Working Individually,Classroom Space
+2,NA,2015-07-23,3,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-28,3,1,Basic Skills Activity,Working Individually,Classroom Space
+2,NA,2015-07-30,3,1,Student Presentation,Whole Group,Classroom Space
+5,NA,2015-07-14,3,0,Field Trip Speaker,Whole Group,Outdoors - Community
+5,NA,2015-07-16,3,0,Not Focused,Whole Group,Outdoors - Community
+5,NA,2015-07-21,3,0,Basic Skills Activity,Whole Group,Outdoors - Community
+5,NA,2015-07-23,3,0,Basic Skills Activity,Small Group,Outdoors - Community
+5,NA,2015-07-28,3,0,Field Trip Speaker,Whole Group,Outdoors - Community
+5,NA,2015-07-30,3,1,Creating Product,Working Individually,Classroom Space
+6,NA,2015-07-13,3,0,Basic Skills Activity,Small Group,Outdoors - Community
+6,NA,2015-07-14,3,1,Not Focused,Whole Group,Indoors - Program
+6,NA,2015-07-21,4,1,Showing Video,Whole Group,Indoors - Program
+6,NA,2015-07-27,3,0,Lab Activity,Small Group,Indoors - Community
+6,NA,2015-07-28,3,1,Creating Product,Small Group,Classroom Space
+8,NA,2015-07-13,3,1,Basic Skills Activity,Small Group,Classroom Space
+8,NA,2015-07-14,3,0,Basic Skills Activity,Whole Group,Vehicle
+8,NA,2015-07-20,3,1,Program Staff Led,Whole Group,Classroom Space
+8,NA,2015-07-21,3,0,Field Trip Speaker,Whole Group,Indoors - Community
+8,NA,2015-07-27,3,1,Creating Product,Working Individually,Classroom Space
+8,NA,2015-07-28,3,0,Not Focused,Whole Group,Outdoors - Community
+7,NA,2015-07-09,3,0,Not Focused,Small Group,Indoors - Community
+7,NA,2015-07-16,3,0,Basic Skills Activity,Small Group,Indoors - Community
+7,NA,2015-07-22,3,1,Not Focused,Small Group,Classroom Space
+7,NA,2015-07-23,3,0,Not Focused,Whole Group,Vehicle
+7,NA,2015-07-29,3,1,Creating Product,Whole Group,Outdoors - Program
+9,NA,2015-07-09,3,0,Basic Skills Activity,Whole Group,Outdoors - Community
+9,NA,2015-07-15,3,1,Not Focused,Whole Group,Outdoors - Program
+9,NA,2015-07-16,3,0,Program Staff Led,Whole Group,Classroom Space
+9,NA,2015-07-23,3,0,Not Focused,Whole Group,Indoors - Community
+9,NA,2015-07-22,3,1,Not Focused,Whole Group,Outdoors - Program
+9,NA,2015-07-29,3,1,Not Focused,Whole Group,Classroom Space
+10,NA,2015-07-15,3,0,Not Focused,Whole Group,Outdoors - Community
+10,NA,2015-07-16,3,1,Program Staff Led,Whole Group,Classroom Space
+10,NA,2015-07-22,3,0,Not Focused,Whole Group,Outdoors - Community
+10,NA,2015-07-23,3,1,Not Focused,Whole Group,Indoors - Program
+10,NA,2015-07-28,3,1,Creating Product,Small Group,Classroom Space
+10,NA,2015-07-29,3,0,Basic Skills Activity,Whole Group,Outdoors - Community
+1,NA,2015-07-14,4,1,Not Focused,Whole Group,Classroom Space
+1,NA,2015-07-15,4,1,Not Focused,Whole Group,Indoors - Program
+1,NA,2015-07-21,4,1,Not Focused,Whole Group,Indoors - Program
+1,NA,2015-07-28,4,1,Not Focused,Whole Group,Indoors - Program
+1,NA,2015-07-29,4,1,Not Focused,Whole Group,Classroom Space
+2,NA,2015-07-14,4,1,Basic Skills Activity,Small Group,Classroom Space
+2,NA,2015-07-16,4,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-21,4,1,Not Focused,Working Individually,Classroom Space
+2,NA,2015-07-23,4,1,Program Staff Led,Whole Group,Classroom Space
+2,NA,2015-07-28,4,1,Basic Skills Activity,Small Group,Classroom Space
+2,NA,2015-07-30,4,1,Program Staff Led,Whole Group,Classroom Space
+5,NA,2015-07-14,4,0,Field Trip Speaker,Small Group,Outdoors - Community
+5,NA,2015-07-16,4,0,Lab Activity,Small Group,Outdoors - Community
+5,NA,2015-07-21,4,0,Lab Activity,Small Group,Outdoors - Community
+5,NA,2015-07-23,4,0,Basic Skills Activity,Small Group,Outdoors - Community
+5,NA,2015-07-28,4,0,Basic Skills Activity,Working Individually,Outdoors - Community
+6,NA,2015-07-13,4,0,Not Focused,Whole Group,Outdoors - Community
+6,NA,2015-07-14,4,1,Lab Activity,Small Group,Classroom Space
+6,NA,2015-07-27,4,0,Lab Activity,Whole Group,Vehicle
+6,NA,2015-07-28,4,1,Creating Product,Small Group,Classroom Space
+8,NA,2015-07-13,4,1,Basic Skills Activity,Small Group,Classroom Space
+8,NA,2015-07-14,4,0,Not Focused,Whole Group,Classroom Space
+8,NA,2015-07-20,4,1,Creating Product,Working Individually,Classroom Space
+8,NA,2015-07-21,4,0,Not Focused,Whole Group,Outdoors - Community
+8,NA,2015-07-27,4,1,Creating Product,Small Group,Classroom Space
+8,NA,2015-07-28,4,0,Not Focused,Whole Group,Outdoors - Community
+7,NA,2015-07-09,4,0,Not Focused,Whole Group,Indoors - Community
+7,NA,2015-07-15,4,1,Off Task,Small Group,Classroom Space
+7,NA,2015-07-16,4,0,Basic Skills Activity,Small Group,Indoors - Community
+7,NA,2015-07-22,4,1,Creating Product,Small Group,Outdoors - Program
+7,NA,2015-07-23,4,0,Creating Product,Whole Group,Outdoors - Program
+7,NA,2015-07-29,4,1,Creating Product,Whole Group,Outdoors - Program
+9,NA,2015-07-09,4,0,Basic Skills Activity,Whole Group,Outdoors - Community
+9,NA,2015-07-15,4,1,Creating Product,Small Group,Classroom Space
+9,NA,2015-07-16,4,0,Program Staff Led,Whole Group,Classroom Space
+9,NA,2015-07-23,4,0,Not Focused,Whole Group,Indoors - Community
+9,NA,2015-07-22,4,1,Creating Product,Small Group,Classroom Space
+9,NA,2015-07-29,4,1,Not Focused,Working Individually,Classroom Space
+10,NA,2015-07-15,4,0,Not Focused,Whole Group,Outdoors - Community
+10,NA,2015-07-16,4,1,Lab Activity,Working Individually,Classroom Space
+10,NA,2015-07-22,4,0,Basic Skills Activity,Whole Group,Outdoors - Community
+10,NA,2015-07-23,4,1,Creating Product,Working Individually,Classroom Space
+10,NA,2015-07-28,4,1,Creating Product,Small Group,Classroom Space
+5,NA,2015-07-14,5,0,Field Trip Speaker,Small Group,Outdoors - Community
