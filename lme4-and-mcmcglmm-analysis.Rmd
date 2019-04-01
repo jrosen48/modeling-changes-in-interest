@@ -24,8 +24,8 @@ This document is structured around:
 
 1. Background (from AERA submission)
 2. Analysis
-  - Using **lme4**
-  - Using **MCMCglmm** (the focus of this work)
+- Using **lme4**
+- Using **MCMCglmm** (the focus of this work)
 
 # 1. Background
 
@@ -122,39 +122,43 @@ d_for_m2 <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # # if t
 prior = list(R = list(V = diag(c(1, 0.0001), 2, 2), nu = 0.002, fix = 2),
              G = list(G1 = list(V = diag(2), nu = 2,
                                 alpha.mu = rep(0, 2),
-                                alpha.V = diag(25^2, 2, 2))))
+                                alpha.V = diag(25^2, 2, 2)),
+                      G2=list(V = diag(2),
+                              n = 2,
+                              alpha.mu = rep(0, 2),
+                              alpha.V  = diag(25^2, 2, 2))))
 
-m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait - 1 + 
+m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait + 
                  trait:gender_female + 
                  trait:pre_interest,
-               random =~ us(trait):participant_ID,
+               random =~ us(trait):participant_ID + us(trait):program_ID,
                rcov = ~ idh(trait):units,
                family = rep("gaussian",2),
                data = as.data.frame(d_for_m2),
                prior = prior,
-               burnin = 3000,
-               nitt = 43000,
+               burnin = 5000,
+               nitt = 60000,
                thin = 40,
                verbose = TRUE)
 ```
 
-```{r}
+```{r, eval = FALSE}
 library(parallel)
 
 set.seed(1)
 m6 <- mclapply(1:4, function(i) {
   MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait - 1 + 
-                 trait:gender_female + 
-                 trait:pre_interest,
-               random =~ us(trait):participant_ID,
-               rcov = ~ idh(trait):units,
-               family = rep("gaussian",2),
-               data = as.data.frame(d_for_m2),
-               prior = prior,
-               burnin = 6000,
-               nitt = 83000,
-               thin = 40,
-               verbose = TRUE)
+             trait:gender_female + 
+             trait:pre_interest,
+           random =~ us(trait):participant_ID,
+           rcov = ~ idh(trait):units,
+           family = rep("gaussian",2),
+           data = as.data.frame(d_for_m2),
+           prior = prior,
+           burnin = 6000,
+           nitt = 83000,
+           thin = 40,
+           verbose = TRUE)
 }, mc.cores=4)
 
 m6 <- lapply(m6, function(m) m$Sol)
@@ -182,21 +186,34 @@ plot(m2)
 m2_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
   (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
      sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
-
 posterior.mode(m2_cor)
 plot(m2_cor)
-HPDinterval(m2_cor)
+
+m2i_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.program_ID"]/
+  (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"])*
+     sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"]))
+posterior.mode(m2i_cor)
+plot(m2i_cor)
+```
+
+```{r, icc}
+rep4<-(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"]/ (m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"]+m2$VCV[,"traitrm_engagement.units"]))
+posterior.mode(rep4)
+HPDinterval(rep4)
+var(m2$VCV[, 'traitpost_interest.program_ID'])
+var(m2$VCV[, 'traitrm_engagement:traitrm_engagement.program_ID'])
+var(m2$VCV[, 'traitrm_engagement:traitrm_engagement.participant_ID'])
 ```
 
 ## Results using brms
 
 ```{r}
 m3 <- brm(mvbind(rm_engagement, post_interest) ~ -1 + 
-                 gender_female + 
-                 pre_interest +
-            (1|participant_ID) +
-            set_rescor(TRUE),
-          data = d_for_m2, chains = 2, cores = 2)
+            gender_female + 
+            pre_interest +
+            (1|participant_ID),
+          data = d_for_m2, chains = 2, cores = 2,
+          control = list(adapt_delta = .999))
 
 m3
 ```
