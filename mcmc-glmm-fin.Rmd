@@ -119,6 +119,8 @@ RM engagement (w/ BLUP) seems important; pre-interest seems important; gender fe
 ```{r, MCMC-model}
 d_for_m2 <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # # if there are missing vals in the fixed predictors, MCMCglmm gives a warning
 
+d_for_m2 <- fill(d_for_m2, pre_interest, post_interest)
+
 prior = list(R = list(V = diag(c(1, 0.0001), 2, 2), nu = 0.002, fix = 2),
              G = list(G1 = list(V = diag(2), nu = 2,
                                 alpha.mu = rep(0, 2),
@@ -132,12 +134,12 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait +
                  trait:gender_female + 
                  trait:pre_interest,
                random =~ us(trait):participant_ID + idh(trait):program_ID,
-               rcov = ~ idh(trait):units,
+               rcov = ~ us(trait):units,
                family = rep("gaussian",2),
                data = as.data.frame(d_for_m2),
                prior = prior,
-               burnin = 5000,
-               nitt = 60000,
+               burnin = 3000,
+               nitt = 40000,
                thin = 40,
                verbose = TRUE)
 ```
@@ -158,11 +160,20 @@ posterior.mode(m2_cor)
 HPDinterval(m2_cor)
 plot(m2_cor)
 
-m2i_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.program_ID"]/
-  (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"])*
-     sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"]))
-posterior.mode(m2i_cor)
-plot(m2i_cor)
+# m2i_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.program_ID"]/
+#   (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"])*
+#      sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"]))
+# posterior.mode(m2i_cor)
+# plot(m2i_cor)
+
+plot(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]/(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"] + m2$VCV[,"traitrm_engagement.units"]))
+
+program_icc <- (m2$VCV[,"traitrm_engagement.program_ID"]/(m2$VCV[,"traitrm_engagement.program_ID"] + m2$VCV[,"traitrm_engagement.units"]))
+posterior.mode(program_icc)
+
+post_int_icc <- (m2$VCV[,"traitpost_interest.program_ID"]/(m2$VCV[,"traitpost_interest.program_ID"] + m2$VCV[,"traitpost_interest.program_ID"]))
+plot(post_int_icc)
+posterior.mode(post_int_icc)
 ```
 
 ```{r, icc}
@@ -175,15 +186,17 @@ var(m2$VCV[, 'traitrm_engagement:traitrm_engagement.participant_ID'])
 var(m2$VCV[, 'traitpost_interest:traitpost_interest.participant_ID'])
 ```
 
-# brms
+# brms - not run
 
 ```{r}
-m3 <- brm(mvbind(rm_engagement, post_interest) ~ -1 + 
+m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
             gender_female + 
             pre_interest +
-            (1|p|participant_ID),
-          data = d_for_m2, chains = 2, cores = 2,
-          control = list(adapt_delta = .999))
+            (1|p|participant_ID) +
+            (1|q|program_ID),
+          data = d_for_m2, chains = 3, cores = 3, iter = 750,
+          control = list(adapt_delta = .999,
+                         list(max_treedepth = 15)))
 
 m3
 ```
