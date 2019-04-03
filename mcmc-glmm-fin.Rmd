@@ -24,15 +24,16 @@ set.seed(12345)
 ```{r, load-packages-load-data}
 library(tidyverse)
 library(MCMCglmm)
+library(brms)
 
 d_red <- read_csv("processed-data/data-to-model.csv")
+
+d_for_m2 <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # if there are missing vals in the fixed predictors, MCMCglmm gives a warning
 ```
 
 # Results using MCMCglmm
 
-```{r, MCMC-model}
-d_for_m2 <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # if there are missing vals in the fixed predictors, MCMCglmm gives a warning
-
+```{r, MCMC-model, eval = FALSE}
 prior = list(R = list(V = diag(c(1, 0.0001), 2, 2), nu = 0.002, fix = 2),
              G = list(G1 = list(V = diag(2), nu = 2,
                                 alpha.mu = rep(0, 2),
@@ -54,6 +55,12 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait +
                nitt = 100000,
                thin = 40,
                verbose = TRUE)
+
+saveRDS(m2, "m2.rds")
+```
+
+```{r}
+m2 <- read_rds("m2.rds")
 ```
 
 ```{r, mcmc-summary}
@@ -61,7 +68,7 @@ summary(m2)
 ```
 
 ```{r, mcmc-plots, fig.height=50}
-plot(m2)
+#plot(m2)
 ```
 
 ```{r, cov}
@@ -81,23 +88,42 @@ posterior.mode(m2_cor2)
 HPDinterval(m2_cor2)
 #plot(m2_cor)
 
-ind_icc <- m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]/(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"] + m2$VCV[,"traitrm_engagement:traitrm_engagement.units"])
+ind_icc <- m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]/(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"] + m2$VCV[,"traitrm_engagement.units"])
 
 posterior.mode(ind_icc)
 HPDinterval(ind_icc)
 
-ind_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"]/(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"] + m2$VCV[,"traitpost_interest:traitpost_interest.units"])
+ind_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"]/(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"] + m2$VCV[,"traitpost_interest.units"])
 
 posterior.mode(ind_icc2)
 HPDinterval(ind_icc2)
 
-prog_icc <- m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"]/(m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"] + m2$VCV[,"traitrm_engagement:traitrm_engagement.units"])
+prog_icc <- m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"]/(m2$VCV[,"traitrm_engagement:traitrm_engagement.program_ID"] + m2$VCV[,"traitrm_engagement.units"])
 
 posterior.mode(prog_icc)
 HPDinterval(prog_icc)
 
-prog_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"]/(m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"] + m2$VCV[,"traitpost_interest:traitpost_interest.units"])
+prog_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"]/(m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"] + m2$VCV[,"traitpost_interest.units"])
 
 posterior.mode(prog_icc2)
 HPDinterval(prog_icc2)
+```
+
+```{r}
+m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
+            gender_female + 
+            pre_interest +
+            (1|p|participant_ID) +
+            (1|q|program_ID),
+          data = d_for_m2, chains = 4, cores = 4, iter = 1000,
+          control = list(adapt_delta = .999,
+                         max_treedepth = 15))
+
+saveRDS(m3, "m3.rds")
+```
+
+```{r}
+m <- read_rds("m3.rds")
+m
+```
 ```
