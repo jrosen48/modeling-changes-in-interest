@@ -185,18 +185,3 @@ var(m2$VCV[, 'traitrm_engagement.program_ID'])
 var(m2$VCV[, 'traitrm_engagement:traitrm_engagement.participant_ID'])
 var(m2$VCV[, 'traitpost_interest:traitpost_interest.participant_ID'])
 ```
-
-# brms - not run
-
-```{r}
-m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
-            gender_female + 
-            pre_interest +
-            (1|p|participant_ID) +
-            (1|q|program_ID),
-          data = d_for_m2, chains = 3, cores = 3, iter = 750,
-          control = list(adapt_delta = .999,
-                         list(max_treedepth = 15)))
-
-m3
-```
