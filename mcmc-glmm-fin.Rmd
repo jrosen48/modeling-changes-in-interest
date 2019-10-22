@@ -1,7 +1,7 @@
 ---
 title: "Using A Multivariate Model to Understand How Youths’ In-The-Moment Engagement Predicts Changes in Youths’ Interest"
-author: "Joshua M. Rosenberg, Patrick N. Beymer, Thomas M. Houslay, and Jennifer A. Schmidt"
-date: "3/27/2018"
+author: "Joshua M. Rosenberg"
+date: "10/22/2019"
 output: html_document
 ---
 
@@ -67,8 +67,9 @@ m2 <- read_rds("m2.rds")
 summary(m2)
 ```
 
+This creates a lot of plots
 ```{r, mcmc-plots, fig.height=50}
-#plot(m2)
+plot(m2)
 ```
 
 ```{r, cov}
@@ -108,6 +109,8 @@ prog_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.program_ID"]/(m2$VCV
 posterior.mode(prog_icc2)
 HPDinterval(prog_icc2)
 ```
+
+# Results using brms
 
 ```{r}
 m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
