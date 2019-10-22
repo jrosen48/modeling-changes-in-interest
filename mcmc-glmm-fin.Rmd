@@ -55,12 +55,6 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait +
                nitt = 100000,
                thin = 40,
                verbose = TRUE)
-
-saveRDS(m2, "m2.rds")
-```
-
-```{r}
-m2 <- read_rds("m2.rds")
 ```
 
 ```{r, mcmc-summary}
@@ -122,11 +116,8 @@ m3 <- brm(mvbind(rm_engagement, post_interest) ~
           control = list(adapt_delta = .999,
                          max_treedepth = 15))
 
-saveRDS(m3, "m3.rds")
 ```
 
 ```{r}
-m <- read_rds("m3.rds")
-m
-```
+m3
 ```
