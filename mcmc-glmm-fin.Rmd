@@ -1,7 +1,7 @@
 ---
 title: "Using A Multivariate Model to Understand How Youths’ In-The-Moment Engagement Predicts Changes in Youths’ Interest"
-author: "Joshua M. Rosenberg, Patrick N. Beymer, Thomas M. Houslay, and Jennifer A. Schmidt"
-date: "3/27/2018"
+author: "Joshua M. Rosenberg"
+date: "10/22/2019"
 output: html_document
 ---
 
@@ -55,20 +55,15 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait +
                nitt = 100000,
                thin = 40,
                verbose = TRUE)
-
-saveRDS(m2, "m2.rds")
-```
-
-```{r}
-m2 <- read_rds("m2.rds")
 ```
 
 ```{r, mcmc-summary}
 summary(m2)
 ```
 
+This creates a lot of plots
 ```{r, mcmc-plots, fig.height=50}
-#plot(m2)
+plot(m2)
 ```
 
 ```{r, cov}
@@ -111,6 +106,8 @@ posterior.mode(prog_icc2)
 HPDinterval(prog_icc2)
 ```
 
+# Results using brms
+
 ```{r}
 m3 <- brm(mvbind(rm_engagement, post_interest) | resp_trunc(1, 4) ~ 
             gender_female + 
@@ -121,10 +118,4 @@ m3 <- brm(mvbind(rm_engagement, post_interest) | resp_trunc(1, 4) ~
           control = list(adapt_delta = .999,
                          max_treedepth = 15))
 
-saveRDS(m3, "m3.rds")
-```
-
-```{r}
-m <- read_rds("m3.rds")
-m
 ```
