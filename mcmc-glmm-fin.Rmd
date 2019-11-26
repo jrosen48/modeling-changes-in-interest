@@ -57,16 +57,16 @@ m2 <- MCMCglmm(fixed = cbind(rm_engagement, post_interest) ~ trait +
                verbose = TRUE)
 ```
 
-```{r, mcmc-summary}
+```{r, mcmc-summary,eval=F}
 summary(m2)
 ```
 
 This creates a lot of plots
-```{r, mcmc-plots, fig.height=50}
+```{r, mcmc-plots, fig.height=50,eval=F}
 plot(m2)
 ```
 
-```{r, cov}
+```{r, cov,eval=F}
 m2_cor <- m2$VCV[,"traitpost_interest:traitrm_engagement.participant_ID"]/
   (sqrt(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"])*
      sqrt(m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]))
@@ -107,17 +107,37 @@ HPDinterval(prog_icc2)
 # Results using brms
 
 ```{r}
+d_for_m2 <- d_for_m2 %>% 
+  group_by(participant_ID) %>% 
+  mutate(signal_number = row_number()) %>% 
+  ungroup()
+```
+
+```{r}
 m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
             gender_female + 
             pre_interest +
             (1|p|participant_ID) +
-            (1|q|program_ID),
-          data = d_for_m2, chains = 4, cores = 4, iter = 1000,
+            autocor = cor_ar(~ signal_number | participant_ID),
+          data = d_for_m2, 
+          chains = 4, cores = 4, iter = 500,
           control = list(adapt_delta = .999,
                          max_treedepth = 15))
-
 ```
 
 ```{r}
-m3
+bf_1 <- bf(rm_engagement~ gender_female + pre_interest + (relevance|p|participant_ID))
+bf_2 <- bf(post_interest ~ gender_female + pre_interest + (1|p|participant_ID))
+
+m4 <- brm(bf_1 + bf_2,
+          data = d_for_m2, 
+          chains = 4, cores = 4, iter = 750)
+
+bf_2_1 <- bf(rm_engagement~ gender_female + pre_interest + signal_number + (relevance + signal_number|p|participant_ID))
+bf_2_2 <- bf(post_interest ~ gender_female + pre_interest + (1|p|participant_ID))
+
+m5 <- brm(bf_2_1 + bf_2_2,
+          autocor = cor_ar(~ signal_number | participant_ID),
+          data = d_for_m2, 
+          chains = 4, cores = 4, iter = 750)
 ```
