@@ -87,7 +87,9 @@ ind_icc <- m2$VCV[,"traitrm_engagement:traitrm_engagement.participant_ID"]/(m2$V
 
 posterior.mode(ind_icc)
 HPDinterval(ind_icc)
+```
 
+```{r}
 ind_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"]/(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"] + m2$VCV[,"traitpost_interest.units"])
 
 posterior.mode(ind_icc2)
@@ -114,7 +116,7 @@ d_for_m2 <- d_for_m2 %>%
 ```
 
 ```{r}
-m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
+m3 <- brm(mvbind(rm_engagement, post_interest) | resp_trunc(1, 4) ~ 
             gender_female + 
             pre_interest +
             (1|p|participant_ID) +
