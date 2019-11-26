@@ -1,0 +1,64 @@
+---
+title: "Using A Multivariate Model to Understand How Youths’ In-The-Moment Engagement Predicts Changes in Youths’ Interest"
+author: "Joshua M. Rosenberg, Patrick N. Beymer, Thomas M. Houslay, and Jennifer A. Schmidt"
+date: "3/27/2018"
+output: html_document
+---
+
+```{r, setup-results-fix, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      collapse = TRUE,
+                      fig.width = 6,
+                      fig.asp = .618,
+                      out.width = "80%", 
+                      fig.align = "center", 
+                      results = "hold", 
+                      cache = TRUE) 
+
+options(knitr.kable.NA = '')
+set.seed(12345)
+```
+
+## Loading data, setting up
+
+```{r, load-packages-load-data}
+library(tidyverse)
+library(brms)
+
+d_red <- read_csv("processed-data/data-to-model.csv")
+```
+
+*Note to Tom*: Using results of `r2glmm::r2beta()` to calculate correlation between RM engagement (BLUP) and post-interestinterest; take square root of that value.
+
+${ r }_{ BLUP-post-interest }$ = `r partial_corr`, accounting for their initial interest in STEM, their gender, and the nesting and cross-classification of youths’ responses.
+
+### Super high-level summary of results from lme4
+
+RM engagement (w/ BLUP) seems important; pre-interest seems important; gender female not quite important.
+
+## 2B. Results using MCMCglmm
+
+```{r, MCMC-model, eval = FALSE}
+d_for_m2 <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # # if there are missing vals in the fixed predictors, MCMCglmm gives a warning
+
+d_for_m2 <- fill(d_for_m2, pre_interest, post_interest)
+
+# brms - not run
+
+library(brms)
+m3 <- brm(mvbind(rm_engagement, post_interest) ~ 
+            gender_female + 
+            pre_interest +
+            (1|p|participant_ID) +
+            (1|q|program_ID),
+          data = d_for_m2, chains = 4, cores = 4, iter = 1000,
+          control = list(adapt_delta = .999,
+                         max_treedepth = 15))
+
+saveRDS(m3, "m3.rds")
+```
+
+```{r}
+m <- read_rds("m3.rds")
+m
+```

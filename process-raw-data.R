@@ -3,7 +3,7 @@ library(tidyverse)
 # install_github("jrosen48/jmRtools")
 library(jmRtools)
 
-# load("~/desktop/sandbox-01.Rdata")
+load("~/desktop/sandbox-01.Rdata")
 # 
 # l1 <- list(demographics, 
 #            post_survey_data_partially_processed,
@@ -142,7 +142,9 @@ df <- mutate(df, inquiry_based = ifelse(youth_activity_rc == "Creating Product" 
 
 dff <- select(df, 
               participant_ID, 
-              program_ID, 
+              program_ID,
+              beep_ID_new,
+              relevance,
               rm_engagement = overall_engagement,
               gender_female,
               urm,
@@ -164,7 +166,8 @@ d_red <- d %>%
     mutate(rownum = row_number()) %>%
     mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
 
-write_csv(select(d_red, participant_ID, program_ID, rm_engagement, pre_interest, post_interest, gender_female), "processed-data/data-to-model.csv")
+write_csv(select(d_red, participant_ID, program_ID, rm_engagement, pre_interest, post_interest, gender_female), 
+          "processed-data/data-to-model.csv")
 
 # Preparing/structuring data 
 # ind <- distinct(d, participant_ID, post_interest) 
