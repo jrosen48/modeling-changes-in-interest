@@ -141,6 +141,9 @@ df <- mutate(df, inquiry_based = ifelse(youth_activity_rc == "Creating Product" 
 #     select(-participant_ID)
 
 dff <- select(df, 
+              response_date,
+              interest,
+              within_date_signal_number = signal_number,
               participant_ID, 
               program_ID,
               beep_ID_new,
@@ -166,8 +169,7 @@ d_red <- d %>%
     mutate(rownum = row_number()) %>%
     mutate(post_interest = ifelse(rownum == 1, post_interest, NA))
 
-write_csv(select(d_red, participant_ID, program_ID, rm_engagement, pre_interest, post_interest, gender_female), 
-          "processed-data/data-to-model.csv")
+write_csv(d_red, "processed-data/data-to-model.csv")
 
 # Preparing/structuring data 
 # ind <- distinct(d, participant_ID, post_interest) 

@@ -1,7 +1,7 @@
 ---
 title: "Using A Multivariate Model to Understand How Youths’ In-The-Moment Engagement Predicts Changes in Youths’ Interest"
-author: "Joshua M. Rosenberg, Patrick N. Beymer, Thomas M. Houslay, and Jennifer A. Schmidt"
-date: "3/27/2018"
+author: "Josh"
+date: "12/07/2019"
 output: html_document
 ---
 
@@ -21,24 +21,12 @@ set.seed(12345)
 
 ## Loading data, setting up
 
-```{r, load-packages-load-data}
+```{r, load-packages-load-data, echo = FALSE}
 library(tidyverse)
 library(brms)
 
 d_red <- read_csv("processed-data/data-to-model.csv")
-```
 
-*Note to Tom*: Using results of `r2glmm::r2beta()` to calculate correlation between RM engagement (BLUP) and post-interestinterest; take square root of that value.
-
-${ r }_{ BLUP-post-interest }$ = `r partial_corr`, accounting for their initial interest in STEM, their gender, and the nesting and cross-classification of youths’ responses.
-
-### Super high-level summary of results from lme4
-
-RM engagement (w/ BLUP) seems important; pre-interest seems important; gender female not quite important.
-
-## 2B. Results using MCMCglmm
-
-```{r, MCMC-model, eval = TRUE}
 d_for_m2 <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # if there are missing vals in the fixed predictors, MCMCglmm gives a warning
 
 d_for_m2 <- fill(d_for_m2, pre_interest, post_interest)
@@ -52,19 +40,52 @@ d_for_m2 <- d_for_m2 %>%
          creating_product_prop = `Creating Product`)
 ```
 
+# Null model
+
 ```{r}
 bf_0_1 <- bf(interest ~ 1 +
-             (1|s|beep_ID_new) +
-             (1|q|program_ID))
+               (1|s|beep_ID_new) +
+               (1|p|participant_ID) +
+               (1|q|program_ID))
 
 bf_0_2 <- bf(post_interest ~ 1 +
-             (1|s|beep_ID_new) +
-             (1|p|participant_ID))
+               (1|s|beep_ID_new) +
+               (1|p|participant_ID) +
+               (1|q|program_ID))
 
 m0 <- brm(bf_0_1 + bf_0_2,
           data = d_for_m2, 
           chains = 4, cores = 4, iter = 500)
 ```
+
+# Full model, without the program random effect
+
+```{r}
+bf_1 <- bf(interest ~ 1 +
+             challenge +
+             relevance +
+             gender_female + 
+             pre_interest +
+             creating_product +
+             lab_activity + 
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female + 
+             pre_interest +
+             lab_activity_prop +
+             creating_product_prop +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID))
+
+m1a <- brm(bf_1 + bf_2,
+           data = d_for_m2, 
+           chains = 4, cores = 4, iter = 1000)
+```
+
+# Full model, full random effects structure
 
 ```{r}
 bf_1 <- bf(interest ~ 1 +
@@ -92,29 +113,3 @@ m1 <- brm(bf_1 + bf_2,
           data = d_for_m2, 
           chains = 4, cores = 4, iter = 1000)
 ```
-
-```{r}
-bf_1 <- bf(interest ~ 1 +
-             challenge +
-             relevance +
-             gender_female + 
-             pre_interest +
-             creating_product +
-             lab_activity + 
-             (1|s|beep_ID_new) +
-             (1|p|participant_ID))
-
-bf_2 <- bf(post_interest ~ 1 +
-             prop_attend +
-             gender_female + 
-             pre_interest +
-             lab_activity_prop +
-             creating_product_prop +
-             (1|s|beep_ID_new) +
-             (1|p|participant_ID))
-
-m1a <- brm(bf_1 + bf_2,
-          data = d_for_m2, 
-          chains = 4, cores = 4, iter = 1000)
-```
-

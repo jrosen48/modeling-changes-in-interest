@@ -89,7 +89,7 @@ posterior.mode(ind_icc)
 HPDinterval(ind_icc)
 ```
 
-```{r}
+```{r,eval=F}
 ind_icc2 <- m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"]/(m2$VCV[,"traitpost_interest:traitpost_interest.participant_ID"] + m2$VCV[,"traitpost_interest.units"])
 
 posterior.mode(ind_icc2)
@@ -110,36 +110,32 @@ HPDinterval(prog_icc2)
 
 ```{r}
 d_for_m2 <- d_for_m2 %>% 
-  group_by(participant_ID) %>% 
-  mutate(signal_number = row_number()) %>% 
-  ungroup()
+  arrange(participant_ID, response_date, within_date_signal_number) %>%
+  group_by(participant_ID) %>%
+  mutate(sig_num = row_number())
 ```
 
 ```{r}
-m3 <- brm(mvbind(rm_engagement, post_interest) | resp_trunc(1, 4) ~ 
-            gender_female + 
-            pre_interest +
-            (1|p|participant_ID) +
-            autocor = cor_ar(~ signal_number | participant_ID),
-          data = d_for_m2, 
-          chains = 4, cores = 4, iter = 500,
-          control = list(adapt_delta = .999,
-                         max_treedepth = 15))
-```
-
-```{r}
-bf_1 <- bf(rm_engagement~ gender_female + pre_interest + (relevance|p|participant_ID))
-bf_2 <- bf(post_interest ~ gender_female + pre_interest + (1|p|participant_ID))
+bf_1 <- bf(interest ~ gender_female + pre_interest + relevance + sig_num + (relevance + sig_num|p|participant_ID))
+bf_2 <- bf(post_interest ~ gender_female + pre_interest + sig_num + (1|p|participant_ID))
 
 m4 <- brm(bf_1 + bf_2,
+          autocor = cor_ar(~ signal_number | participant_ID),
           data = d_for_m2, 
-          chains = 4, cores = 4, iter = 750)
+          chains = 4, cores = 4, iter = 1000)
+```
 
-bf_2_1 <- bf(rm_engagement~ gender_female + pre_interest + signal_number + (relevance + signal_number|p|participant_ID))
-bf_2_2 <- bf(post_interest ~ gender_female + pre_interest + (1|p|participant_ID))
+```{r}
+# ggplot(d_for_m2, aes(x = sig_num, y = interest, group = as.factor(participant_ID), color = as.factor(participant_ID))) +
+#   geom_point() +
+#   geom_smooth(method = 'lm', se = FALSE) +
+#   theme(legend.position = "none")
+
+bf_2_1 <- bf(interest ~ gender_female + pre_interest + sig_num + (relevance + sig_num|p|participant_ID) + (1|program_ID))
+bf_2_2 <- bf(post_interest ~ gender_female + pre_interest + (1|p|participant_ID) + (1|program_ID))
 
 m5 <- brm(bf_2_1 + bf_2_2,
           autocor = cor_ar(~ signal_number | participant_ID),
           data = d_for_m2, 
-          chains = 4, cores = 4, iter = 750)
+          chains = 4, cores = 4, iter = 1500)
 ```
