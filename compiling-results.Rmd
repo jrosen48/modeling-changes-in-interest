@@ -1,0 +1,266 @@
+---
+title: "compiling-results - modeling changes in interest"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r, message = FALSE}
+library(tidyverse)
+library(brms)
+```
+
+```{r, eval = FALSE}
+d_red <- read_csv("processed-data/data-to-model.csv")
+
+d <- filter(d_red, !is.na(gender_female) & !is.na(pre_interest)) # if there are missing vals in the fixed predictors, MCMCglmm gives a warning
+
+d <- fill(d, pre_interest, post_interest)
+
+d <- d %>% 
+  mutate(creating_product = ifelse(youth_activity_rc == "Creating Product", 1, 0),
+         lab_activity = ifelse(youth_activity_rc == "Lab Activity", 1, 0))
+
+d <- d %>% 
+  rename(lab_activity_prop = `Lab Activity`,
+         creating_product_prop = `Creating Product`)
+
+d <- d %>% 
+  mutate(creating_product = creating_product * 100,
+         lab_activity = lab_activity * 100)
+```
+
+```{r}
+files <- list.files()[str_detect(list.files(), ".rds")] 
+
+l <- files %>% 
+  map(read_rds)
+```
+
+# M0 - Null model
+
+```{r, eval = FALSE}
+bf_0_1 <- bf(interest ~ 1 +
+               (1|s|beep_ID_new) +
+               (1|p|participant_ID) +
+               (1|q|program_ID))
+
+bf_0_2 <- bf(post_interest ~ 1 +
+               (1|s|beep_ID_new) +
+               (1|p|participant_ID) +
+               (1|q|program_ID))
+
+m0 <- brm(bf_0_1 + bf_0_2,
+          data = d_for_m2, 
+          chains = 4, cores = 4, iter = 1000)
+
+write_rds(m0, "m0.rds")
+```
+
+```{r}
+l[[1]]
+```
+
+# M1MB - Only student-level vars added
+
+```{r, eval = FALSE}
+bf_1 <- bf(interest ~ 1 +
+             # challenge +
+             # relevance +
+             gender_female +
+             pre_interest +
+             # creating_product +
+             # lab_activity +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female +
+             pre_interest +
+             # lab_activity_prop +
+             # creating_product_prop +
+             (1|p|participant_ID))
+
+m1 <- brm(bf_1 + bf_2,
+          data = d,
+          chains = 8, cores = 8, iter = 1000)
+
+write_rds(m1, 'm1mb.rds')
+```
+```{r}
+l[[3]]
+```
+
+# M2MB - Adds challenge and relevance
+
+```{r, eval = FALSE}
+bf_1 <- bf(interest ~ 1 +
+             challenge +
+             relevance +
+             gender_female +
+             pre_interest +
+             # creating_product +
+             # lab_activity +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female +
+             pre_interest +
+             # lab_activity_prop +
+             # creating_product_prop +
+             (1|p|participant_ID))
+
+m2 <- brm(bf_1 + bf_2,
+          data = d,
+          chains = 8, cores = 8, iter = 1000)
+
+write_rds(m2, 'm2mb.rds')
+```
+
+```{r}
+l[[5]]
+```
+
+# M3MB - Adds creating product and lab activity
+
+```{r, eval = FALSE}
+bf_1 <- bf(interest ~ 1 +
+             challenge +
+             relevance +
+             gender_female +
+             pre_interest +
+             creating_product +
+             lab_activity +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female +
+             pre_interest +
+             # lab_activity_prop +
+             # creating_product_prop +
+             (1|p|participant_ID))
+
+m3 <- brm(bf_1 + bf_2,
+          data = d,
+          chains = 8, cores = 8, iter = 1000)
+
+write_rds(m3, 'm3mb.rds')
+
+```
+
+```{r}
+l[[7]]
+```
+
+# M4MB - Adds proportions
+
+```{r, eval = FALSE}
+bf_1 <- bf(interest ~ 1 +
+             challenge +
+             relevance +
+             gender_female +
+             pre_interest +
+             creating_product +
+             lab_activity +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female +
+             pre_interest +
+             lab_activity_prop +
+             creating_product_prop +
+             (1|p|participant_ID))
+
+m4 <- brm(bf_1 + bf_2,
+          data = d,
+          chains = 8, cores = 8, iter = 1000)
+
+write_rds(m4, 'm4mb.rds')
+```
+
+```{r}
+l[[8]]
+```
+
+# M2 - Adds random effect for program
+
+```{r, eval = FALSE}
+bf_1 <- bf(interest ~ 1 +
+             challenge +
+             relevance +
+             gender_female + 
+             pre_interest +
+             creating_product +
+             lab_activity + 
+             (1|s|beep_ID_new) +
+             (1|q|program_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female + 
+             pre_interest +
+             lab_activity_prop +
+             creating_product_prop +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID) +
+             (1|q|program_ID))
+
+m1 <- brm(bf_1 + bf_2,
+          data = d_for_m2, 
+          chains = 4, cores = 4, iter = 1000)
+
+write_rds(m4, 'm1.rds')
+```
+
+Should probably add this to all the previous "mb" models
+
+```{r}
+l[[4]]
+```
+
+# M3 - Adds relevance by momentary interest random slope
+
+```{r, eval = FALSE}
+
+bf_1 <- bf(interest ~ 1 +
+             challenge +
+             relevance +
+             gender_female + 
+             pre_interest +
+             creating_product +
+             lab_activity + 
+             (relevance|s|beep_ID_new) +
+             (1|q|program_ID))
+
+bf_2 <- bf(post_interest ~ 1 +
+             prop_attend +
+             gender_female + 
+             pre_interest +
+             lab_activity_prop +
+             creating_product_prop +
+             (1|s|beep_ID_new) +
+             (1|p|participant_ID) +
+             (1|q|program_ID))
+
+m2 <- brm(bf_1 + bf_2,
+          data = d_for_m2, 
+          chains = 4, cores = 4, iter = 1000)
+
+write_rds(m2, 'm2.rds')
+```
+
+```{r}
+l[[6]]
+```
