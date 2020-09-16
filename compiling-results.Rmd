@@ -56,7 +56,7 @@ bf_0_2 <- bf(post_interest ~ 1 +
                (1|q|program_ID))
 
 m0 <- brm(bf_0_1 + bf_0_2,
-          data = d_for_m2, 
+          data = d, 
           chains = 4, cores = 4, iter = 1000)
 
 write_rds(m0, "m0.rds")

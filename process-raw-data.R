@@ -3,7 +3,8 @@ library(tidyverse)
 # install_github("jrosen48/jmRtools")
 library(jmRtools)
 
-load("~/desktop/sandbox-01.Rdata")
+load("sandbox-01.Rdata")
+
 # 
 # l1 <- list(demographics, 
 #            post_survey_data_partially_processed,
@@ -20,14 +21,14 @@ load("~/desktop/sandbox-01.Rdata")
 
 ## ---- processing-attendance-demo-esm-data--------------------------------
 
-attendance <- read_csv("raw-data/attendance.csv")
-demographics <- read_csv("raw-data/demographics.csv")
-post_survey_data_partially_processed <- read_csv("raw-data/post_survey_data_partially_processed.csv")
-pre_survey_data_processed <- read_csv("raw-data/pre_survey_data_processed.csv")
-video <- read_csv("raw-data/video.csv")
-pqa <- read_csv("raw-data/pqa.csv")
-pm <- read_csv("raw-data/pm.csv")
-esm <- read_csv("raw-data/esm.csv")
+# attendance <- read_csv("raw-data/attendance.csv")
+# demographics <- read_csv("raw-data/demographics.csv")
+# post_survey_data_partially_processed <- read_csv("raw-data/post_survey_data_partially_processed.csv")
+# pre_survey_data_processed <- read_csv("raw-data/pre_survey_data_processed.csv")
+# video <- read_csv("raw-data/video.csv")
+# pqa <- read_csv("raw-data/pqa.csv")
+# pm <- read_csv("raw-data/pm.csv")
+# esm <- read_csv("raw-data/esm.csv")
 
 attendance <- rename(attendance, participant_ID = ParticipantID)
 attendance <- mutate(attendance, prop_attend = DaysAttended / DaysScheduled,
